@@ -48,6 +48,18 @@
       ]
     },
     {
+      "url": "/backups",
+      "name": "Backups",
+      "icon": "menu-icon icon-base bx bx-data",
+      "slug": "backups"
+    },
+    {
+      "url": "/activity-log",
+      "name": "Activity Log",
+      "icon": "menu-icon icon-base bx bx-list-ul",
+      "slug": "activity-log"
+    },
+    {
       "url": "/settings",
       "name": "System Settings",
       "icon": "menu-icon icon-base bx bx-cog",

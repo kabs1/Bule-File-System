@@ -61,7 +61,7 @@ return [
         Features::termsAndPrivacyPolicy(),
         Features::profilePhotos(),
         Features::api(),
-        Features::teams(['invitations' => true]),
+        // Features::teams(['invitations' => true]), // Disabled teams feature
         Features::accountDeletion(),
         'email-verification',
         'two-factor-authentication',

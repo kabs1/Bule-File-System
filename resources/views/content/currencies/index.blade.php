@@ -1,4 +1,4 @@
-@extends('layouts.contentLayoutMaster')
+@extends('layouts.contentNavbarLayout')
 
 @section('title', 'Currencies')
 
@@ -9,7 +9,7 @@
         <a href="{{ route('currencies.create') }}" class="btn btn-primary">Add New Currency</a>
     </div>
     <div class="card-body">
-        @if ($message = Session::get('success'))
+        @if ($message = session('success'))
             <div class="alert alert-success">
                 <p>{{ $message }}</p>
             </div>

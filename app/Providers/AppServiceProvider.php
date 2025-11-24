@@ -5,6 +5,11 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+
+use Spatie\Backup\BackupManager;
+use Spatie\Backup\Config\Config;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +18,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(BackupManager::class, function ($app) {
+            return new BackupManager($app->make(Config::class));
+        });
     }
 
     /**

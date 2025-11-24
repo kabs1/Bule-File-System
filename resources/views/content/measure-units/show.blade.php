@@ -1,4 +1,4 @@
-@extends('layouts.contentLayoutMaster')
+@extends('layouts.contentNavbarLayout')
 
 @section('title', 'Show Measure Unit')
 

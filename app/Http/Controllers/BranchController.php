@@ -11,9 +11,12 @@ class BranchController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $branches = Branch::all();
+        if ($request->ajax()) {
+            return response()->json(['data' => $branches]);
+        }
         return view('content.pages.branches', compact('branches'));
     }
 

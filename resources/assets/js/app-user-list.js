@@ -40,8 +40,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
         { data: 'id', orderable: false, render: DataTable.render.select() },
         { data: 'full_name' },
         { data: 'role' },
-        { data: 'current_plan' },
-        { data: 'billing' },
         { data: 'status' },
         { data: 'created_by' },
         { data: 'branch' },
@@ -137,17 +135,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
           }
         },
         {
-          // Plans
-          targets: 4,
-          render: function (data, type, full, meta) {
-            const plan = full['current_plan'];
-
-            return '<span class="text-heading">' + plan + '</span>';
-          }
-        },
-        {
           // User Status
-          targets: 6,
+          targets: 4,
           render: function (data, type, full, meta) {
             const status = full['status'];
 
@@ -161,13 +150,13 @@ document.addEventListener('DOMContentLoaded', function (e) {
           }
         },
         {
-          targets: 7, // New column for 'Created By'
+          targets: 5, // New column for 'Created By'
           render: function (data, type, full, meta) {
             return `<span class="text-heading">${full['created_by']}</span>`;
           }
         },
         {
-          targets: 8, // New column for 'Branch'
+          targets: 6, // New column for 'Branch'
           render: function (data, type, full, meta) {
             return `<span class="text-heading">${full['branch']}</span>`;
           }
@@ -235,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       text: `<span class="d-flex align-items-center"><i class="icon-base bx bx-printer me-2"></i>Print</span>`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
+                        columns: [3, 4, 5, 6],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
@@ -268,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       text: `<span class="d-flex align-items-center"><i class="icon-base bx bx-file me-2"></i>Csv</span>`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
+                        columns: [3, 4, 5, 6],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
@@ -291,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       text: `<span class="d-flex align-items-center"><i class="icon-base bx bxs-file-export me-2"></i>Excel</span>`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
+                        columns: [3, 4, 5, 6],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
@@ -314,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       text: `<span class="d-flex align-items-center"><i class="icon-base bx bxs-file-pdf me-2"></i>Pdf</span>`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
+                        columns: [3, 4, 5, 6],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
@@ -337,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       text: `<i class="icon-base bx bx-copy me-1"></i>Copy`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
+                        columns: [3, 4, 5, 6],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
@@ -454,9 +443,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
         // Role filter
         createFilter(3, '.user_role', 'UserRole', 'Select Role');
 
-        // Plan filter
-        createFilter(4, '.user_plan', 'UserPlan', 'Select Plan');
-
         // Status filter
         const statusFilter = document.createElement('select');
         statusFilter.id = 'FilterTransaction';
@@ -465,10 +451,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
         document.querySelector('.user_status').appendChild(statusFilter);
         statusFilter.addEventListener('change', () => {
           const val = statusFilter.value ? `^${statusFilter.value}$` : '';
-          api.column(6).search(val, true, false).draw();
+          api.column(4).search(val, true, false).draw();
         });
 
-        const statusColumn = api.column(6);
+        const statusColumn = api.column(4);
         const uniqueStatusData = Array.from(new Set(statusColumn.data().toArray())).sort();
         uniqueStatusData.forEach(d => {
           const option = document.createElement('option');
@@ -479,10 +465,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
         });
 
         // Created By filter
-        createFilter(7, '.user_created_by', 'UserCreatedBy', 'Select Creator');
+        createFilter(5, '.user_created_by', 'UserCreatedBy', 'Select Creator');
 
         // Branch filter
-        createFilter(8, '.user_branch', 'UserBranch', 'Select Branch');
+        createFilter(6, '.user_branch', 'UserBranch', 'Select Branch');
       }
     });
 

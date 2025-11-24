@@ -13,30 +13,21 @@ class RoleController extends Controller
 {
     public function index()
     {
-        // Debugging: Check what getModelForGuard returns
-        // Debugging: Check what getModelForGuard returns
-        // Debugging: Check what getModelForGuard returns
-        $userModelClass = Guard::getModelForGuard(config('auth.defaults.guard'));
-        Log::info('User Model Class resolved by Spatie Guard: ' . $userModelClass);
-        Log::info('Auth Guards: ' . json_encode(config('auth.guards')));
-        Log::info('Auth Providers: ' . json_encode(config('auth.providers')));
-        // dd('User Model Class resolved by Spatie Guard: ' . $userModelClass); // Temporarily dump to see the value
-
-        $roles = Role::all(); // Temporarily remove withCount('users')
+        $roles = Role::all(); // Temporarily fetch all roles without eager loading users
         $permissions = Permission::all(); // Fetch all permissions for the modal
         return view('content.pages.roles', compact('roles', 'permissions'));
     }
 
     public function list(Request $request)
     {
-        $roles = Role::all(); // Temporarily remove withCount('users')
+        $roles = Role::withCount('users')->get(); // Eager load and count users
         $data = [];
         foreach ($roles as $role) {
             $data[] = [
                 'id' => $role->id,
                 'name' => $role->name,
                 'guard_name' => $role->guard_name,
-                'users_count' => 0, // Placeholder since withCount is removed
+                'users_count' => $role->users_count,
                 'actions' => '' // Actions will be rendered by DataTables
             ];
         }

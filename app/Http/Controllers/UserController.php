@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Branch; // Import the Branch model
-use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Role; // Import the Role model
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
@@ -14,7 +14,18 @@ class UserController extends Controller
     public function index()
     {
         $branches = Branch::all(); // Fetch all branches
-        return view('content.pages.users', compact('branches'));
+
+        $totalUsers = User::count();
+        $roles = Role::all(); // Get all roles from the database
+        $roleCounts = [];
+        foreach ($roles as $role) {
+            // Only count users for roles that actually exist and have users
+            $roleCounts[$role->name] = User::whereHas('roles', function ($query) use ($role) {
+                $query->where('name', $role->name);
+            })->count();
+        }
+
+        return view('content.pages.users', compact('branches', 'totalUsers', 'roleCounts'));
     }
 
     public function list(Request $request)
@@ -28,8 +39,6 @@ class UserController extends Controller
                 'email' => $user->email,
                 'avatar' => $user->profile_photo_path, // Assuming profile photo path is stored here
                 'role' => $user->roles->pluck('name')->implode(', '),
-                'current_plan' => 'Basic', // Placeholder, update if plans are implemented
-                'billing' => 'Auto Debit', // Placeholder
                 'status' => 2, // Placeholder: 1=Pending, 2=Active, 3=Inactive
                 'created_by' => $user->creator ? $user->creator->name : 'N/A', // Display creator's name
                 'branch' => $user->branch ? $user->branch->name : 'N/A', // Display branch name

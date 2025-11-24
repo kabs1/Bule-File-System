@@ -10,6 +10,8 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\SettingController; // Explicitly import SettingController
+use App\Http\Controllers\BackupController; // Import BackupController
+use App\Http\Controllers\ActivityLogController; // Import ActivityLogController
 
 // Main Page Route
 Route::get('/', function () {
@@ -66,4 +68,18 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     // Measure Unit Management Routes
     Route::resource('measure-units', App\Http\Controllers\MeasureUnitController::class);
+
+    // Backup Management Routes
+    Route::group(['prefix' => 'backups', 'as' => 'backups.'], function () {
+        Route::get('/', [BackupController::class, 'index'])->name('index');
+        Route::post('/create', [BackupController::class, 'create'])->name('create');
+        Route::get('/download/{disk}/{path}', [BackupController::class, 'download'])->name('download')->where('path', '.*');
+        Route::delete('/delete/{disk}/{path}', [BackupController::class, 'delete'])->name('delete')->where('path', '.*');
+    });
+
+    // Activity Log Routes
+    Route::group(['prefix' => 'activity-log', 'as' => 'activity-log.'], function () {
+        Route::get('/', [ActivityLogController::class, 'index'])->name('index');
+        Route::delete('/delete/{id}', [ActivityLogController::class, 'destroy'])->name('delete');
+    });
 });

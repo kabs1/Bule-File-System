@@ -15,16 +15,16 @@
 @endsection
 
 @section('content')
-  <div class="row g-6 mb-6">
+<div class="row g-6 mb-6">
     <div class="col-sm-6 col-xl-3">
       <div class="card">
         <div class="card-body">
           <div class="d-flex align-items-start justify-content-between">
             <div class="content-left">
-              <span class="text-heading">Session</span>
+              <span class="text-heading">Users</span>
               <div class="d-flex align-items-center my-1">
-                <h4 class="mb-0 me-2">21,459</h4>
-                <p class="text-success mb-0">(+29%)</p>
+                <h4 class="mb-0 me-2">{{ $totalUsers }}</h4>
+                <p class="text-success mb-0">(+29%)</p> {{-- This percentage is still hardcoded --}}
               </div>
               <small class="mb-0">Total Users</small>
             </div>
@@ -37,69 +37,29 @@
         </div>
       </div>
     </div>
+    @foreach ($roleCounts as $roleName => $userCount)
     <div class="col-sm-6 col-xl-3">
       <div class="card">
         <div class="card-body">
           <div class="d-flex align-items-start justify-content-between">
             <div class="content-left">
-              <span class="text-heading">Paid Users</span>
+              <span class="text-heading">{{ $roleName }} Users</span>
               <div class="d-flex align-items-center my-1">
-                <h4 class="mb-0 me-2">4,567</h4>
-                <p class="text-success mb-0">(+18%)</p>
+                <h4 class="mb-0 me-2">{{ $userCount }}</h4>
+                <p class="text-success mb-0">(+XX%)</p> {{-- Percentage is still hardcoded, can be improved later --}}
               </div>
-              <small class="mb-0">Last week analytics </small>
+              <small class="mb-0">Total {{ $roleName }} Users</small>
             </div>
             <div class="avatar">
-              <span class="avatar-initial rounded bg-label-danger">
-                <i class="icon-base bx bx-user-plus icon-lg"></i>
+              <span class="avatar-initial rounded bg-label-info">
+                <i class="icon-base bx bx-user icon-lg"></i>
               </span>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex align-items-start justify-content-between">
-            <div class="content-left">
-              <span class="text-heading">Active Users</span>
-              <div class="d-flex align-items-center my-1">
-                <h4 class="mb-0 me-2">19,860</h4>
-                <p class="text-danger mb-0">(-14%)</p>
-              </div>
-              <small class="mb-0">Last week analytics</small>
-            </div>
-            <div class="avatar">
-              <span class="avatar-initial rounded bg-label-success">
-                <i class="icon-base bx bx-user-check icon-lg"></i>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex align-items-start justify-content-between">
-            <div class="content-left">
-              <span class="text-heading">Pending Users</span>
-              <div class="d-flex align-items-center my-1">
-                <h4 class="mb-0 me-2">237</h4>
-                <p class="text-success mb-0">(+42%)</p>
-              </div>
-              <small class="mb-0">Last week analytics</small>
-            </div>
-            <div class="avatar">
-              <span class="avatar-initial rounded bg-label-warning">
-                <i class="icon-base bx bx-user-voice icon-lg"></i>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    @endforeach
   </div>
   <!-- Users List Table -->
   <div class="card">
@@ -107,7 +67,6 @@
       <h5 class="card-title mb-0">Search Filters</h5>
       <div class="d-flex justify-content-between align-items-center row pt-4 gap-md-0 g-6">
         <div class="col-md-4 user_role"></div>
-        <div class="col-md-4 user_plan"></div>
         <div class="col-md-4 user_status"></div>
         <div class="col-md-4 user_created_by"></div>
       </div>
@@ -120,8 +79,6 @@
             <th></th>
             <th>User</th>
             <th>Role</th>
-            <th>Plan</th>
-            <th>Billing</th>
             <th>Status</th>
             <th>Created By</th>
             <th>Branch</th>

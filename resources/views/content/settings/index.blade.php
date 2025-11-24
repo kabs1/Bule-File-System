@@ -88,7 +88,7 @@
                     <div class="form-check custom-option custom-option-image custom-option-image-radio mb-0">
                       <label class="form-check-label custom-option-content p-0" for="skinRadios{{ $skin['name'] }}">
                         <span class="custom-option-body mb-0 scaleX-n1-rtl">
-                          @include('assets/img/customizer/' . $skin['image']) {{-- Assuming SVG files are in this path --}}
+                          {!! file_get_contents(public_path('assets/img/customizer/' . $skin['image'])) !!}
                         </span>
                       </label>
                       <input
@@ -148,7 +148,7 @@
                     <div class="form-check custom-option custom-option-image custom-option-image-radio mb-0">
                       <label class="form-check-label custom-option-content p-0" for="layoutsRadios{{ $layout['name'] }}">
                         <span class="custom-option-body mb-0 scaleX-n1-rtl">
-                          @include('assets/img/customizer/' . $layout['image'])
+                          {!! file_get_contents(public_path('assets/img/customizer/' . $layout['image'])) !!}
                         </span>
                       </label>
                       <input
@@ -181,7 +181,7 @@
                     <div class="form-check custom-option custom-option-image custom-option-image-radio mb-0">
                       <label class="form-check-label custom-option-content p-0" for="headerRadioIcon{{ $header['name'] }}">
                         <span class="custom-option-body mb-0 scaleX-n1-rtl">
-                          @include('assets/img/customizer/' . $header['image'])
+                          {!! file_get_contents(public_path('assets/img/customizer/' . $header['image'])) !!}
                         </span>
                       </label>
                       <input
@@ -215,7 +215,7 @@
                     <div class="form-check custom-option custom-option-image custom-option-image-radio mb-0">
                       <label class="form-check-label custom-option-content p-0" for="navbarOptionRadios{{ $navbar['name'] }}">
                         <span class="custom-option-body mb-0 scaleX-n1-rtl">
-                          @include('assets/img/customizer/' . $navbar['image'])
+                          {!! file_get_contents(public_path('assets/img/customizer/' . $navbar['image'])) !!}
                         </span>
                       </label>
                       <input
@@ -248,7 +248,7 @@
                     <div class="form-check custom-option custom-option-image custom-option-image-radio mb-0">
                       <label class="form-check-label custom-option-content p-0" for="contentRadioIcon{{ $content['name'] }}">
                         <span class="custom-option-body mb-0 scaleX-n1-rtl">
-                          @include('assets/img/customizer/' . $content['image'])
+                          {!! file_get_contents(public_path('assets/img/customizer/' . $content['image'])) !!}
                         </span>
                       </label>
                       <input
@@ -281,7 +281,7 @@
                     <div class="form-check custom-option custom-option-image custom-option-image-radio mb-0">
                       <label class="form-check-label custom-option-content p-0" for="directionRadioIcon{{ $direction['name'] }}">
                         <span class="custom-option-body mb-0 scaleX-n1-rtl">
-                          @include('assets/img/customizer/' . $direction['image'])
+                          {!! file_get_contents(public_path('assets/img/customizer/' . $direction['image'])) !!}
                         </span>
                       </label>
                       <input

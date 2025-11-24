@@ -1,4 +1,4 @@
-@extends('layouts.contentLayoutMaster')
+@extends('layouts.contentNavbarLayout')
 
 @section('title', 'Measure Units')
 
@@ -9,7 +9,7 @@
         <a href="{{ route('measure-units.create') }}" class="btn btn-primary">Add New Measure Unit</a>
     </div>
     <div class="card-body">
-        @if ($message = Session::get('success'))
+        @if ($message = session('success'))
             <div class="alert alert-success">
                 <p>{{ $message }}</p>
             </div>

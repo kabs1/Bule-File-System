@@ -97,12 +97,6 @@
               <option value="United States">United States</option>
             </select>
           </div>
-          <div class="col-12">
-            <div class="form-check form-switch my-2 ms-2">
-              <input type="checkbox" class="form-check-input" id="editBillingAddress" checked />
-              <label for="editBillingAddress" class="switch-label">Use as a billing address?</label>
-            </div>
-          </div>
           <div class="col-12 text-center">
             <button type="submit" class="btn btn-primary me-sm-3 me-1">Submit</button>
             <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal"
