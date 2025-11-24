@@ -1,0 +1,57 @@
+{
+  "menu": [
+    {
+      "url": "/",
+      "name": "Home",
+      "icon": "menu-icon icon-base bx bx-home-circle",
+      "slug": "pages-home"
+    },
+    {
+      "url": "/app/branches",
+      "name": "Branches",
+      "icon": "menu-icon icon-base bx bx-building",
+      "slug": "branches"
+    },
+    {
+      "url": "/currencies",
+      "name": "Currencies",
+      "icon": "menu-icon icon-base bx bx-dollar",
+      "slug": "currencies"
+    },
+    {
+      "url": "/measure-units",
+      "name": "Measure Units",
+      "icon": "menu-icon icon-base bx bx-ruler",
+      "slug": "measure-units"
+    },
+    {
+      "url": "/users",
+      "name": "User Management",
+      "icon": "menu-icon icon-base bx bx-user",
+      "slug": "user-management"
+    },
+    {
+      "name": "Access Control",
+      "icon": "menu-icon icon-base bx bx-shield",
+      "slug": "access-control",
+      "submenu": [
+        {
+          "url": "/roles",
+          "name": "Roles",
+          "slug": "roles"
+        },
+        {
+          "url": "/permissions",
+          "name": "Permissions",
+          "slug": "permissions"
+        }
+      ]
+    },
+    {
+      "url": "/settings",
+      "name": "System Settings",
+      "icon": "menu-icon icon-base bx bx-cog",
+      "slug": "system-settings"
+    }
+  ]
+}
