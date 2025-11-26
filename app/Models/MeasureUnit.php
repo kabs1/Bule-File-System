@@ -13,16 +13,11 @@ class MeasureUnit extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'unit_name',
-        'unit_symbol',
-        'date_created',
-        'date_updated',
-        'user_id',
+        'name',
+        'short_name',
     ];
 
     protected $casts = [
-        'date_created' => 'datetime',
-        'date_updated' => 'datetime',
     ];
 
     public function getActivitylogOptions(): LogOptions

@@ -15,7 +15,7 @@
 @endsection
 
 @section('page-script')
-  @vite(['resources/assets/js/app-access-roles.js', 'resources/assets/js/modal-add-role.js'])
+  @vite(['resources/assets/js/app-access-roles.js'])
 @endsection
 
 @section('content')
@@ -79,7 +79,7 @@
       <!-- Role Table -->
       <div class="card">
         <div class="card-datatable">
-          <table class="datatables-users table border-top table-responsive">
+          <table class="datatables-roles table border-top table-responsive">
             <thead>
               <tr>
                 <th></th>

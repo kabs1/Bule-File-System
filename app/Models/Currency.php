@@ -17,8 +17,7 @@ class Currency extends Model
         'date_created',
         'date_updated',
         'user_id',
-        'exchange_rate',
-        'is_default',
+        // 'is_default',
     ];
 
     protected $casts = [

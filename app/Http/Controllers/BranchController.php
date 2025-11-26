@@ -14,7 +14,7 @@ class BranchController extends Controller
     public function index(Request $request)
     {
         $branches = Branch::all();
-        if ($request->ajax()) {
+        if ($request->ajax() || $request->wantsJson()) {
             $data = $branches->map(function ($b) {
                 return [
                     'id' => $b->branch_id,

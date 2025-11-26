@@ -33,8 +33,8 @@ document.addEventListener('DOMContentLoaded', function () {
         render: (data, type, full) => {
           return `
             <div class="d-flex align-items-center">
-              <a href="/measure-units/${full.id}/edit" class="btn btn-icon"><i class="icon-base bx bx-edit icon-md"></i></a>
-              <a href="/measure-units/${full.id}" class="btn btn-icon"><i class="icon-base bx bx-show icon-md"></i></a>
+              <a href="javascript:;" class="btn btn-icon edit-record" data-id="${full.id}"><i class="icon-base bx bx-edit icon-md"></i></a>
+              <a href="javascript:;" class="btn btn-icon delete-record" data-id="${full.id}"><i class="icon-base bx bx-trash icon-md"></i></a>
             </div>
           `;
         }
@@ -57,6 +57,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 className: 'add-new btn btn-primary',
                 action: function () {
                   const el = document.getElementById('offcanvasAddMeasureUnit');
+                  const form = document.getElementById('addMeasureUnitForm');
+                  if (form) {
+                    form.reset();
+                    form.removeAttribute('data-id');
+                  }
+                  const label = document.getElementById('offcanvasAddMeasureUnitLabel');
+                  if (label) label.textContent = 'Add Measure Unit';
                   if (el && typeof bootstrap !== 'undefined') {
                     const instance = bootstrap.Offcanvas.getOrCreateInstance(el);
                     instance.show();
@@ -138,21 +145,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const addMeasureForm = document.getElementById('addMeasureUnitForm');
   if (addMeasureForm) {
-    addMeasureForm.addEventListener('submit', function () {
+    addMeasureForm.addEventListener('submit', function (e) {
+      e.preventDefault();
       const data = {
-        name: addMeasureForm.name.value,
-        short_name: addMeasureForm.short_name.value
+        name: document.getElementById('measure-name').value,
+        short_name: document.getElementById('measure-short').value
       };
-      fetch('/measure-units', {
-        method: 'POST',
+      const id = addMeasureForm.getAttribute('data-id');
+      const method = id ? 'PUT' : 'POST';
+      const url = id ? `/measure-units/${id}` : '/measure-units';
+      fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
           'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
         body: JSON.stringify(data)
       })
-        .then(r => r.json())
+        .then(async r => {
+          const text = await r.text();
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            throw new Error(text);
+          }
+        })
         .then(res => {
           if (res.message) {
             const el = document.getElementById('offcanvasAddMeasureUnit');
@@ -160,8 +179,71 @@ document.addEventListener('DOMContentLoaded', function () {
               bootstrap.Offcanvas.getOrCreateInstance(el).hide();
             }
             dt.ajax.reload();
+            addMeasureForm.reset();
+            addMeasureForm.removeAttribute('data-id');
           }
+        })
+        .catch(err => {
+          console.error('Measure Unit save failed:', err);
+          alert('Failed to save measure unit. Please check inputs and try again.');
         });
     });
   }
+
+  $(document).on('click', '.edit-record', function () {
+    const id = $(this).data('id');
+    fetch(`/measure-units/${id}/edit`, {
+      headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+    })
+      .then(async r => {
+        const text = await r.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error(text);
+        }
+      })
+      .then(m => {
+        document.getElementById('offcanvasAddMeasureUnitLabel').textContent = 'Edit Measure Unit';
+        addMeasureForm.setAttribute('data-id', m.id);
+        document.getElementById('measure-name').value = m.name || '';
+        document.getElementById('measure-short').value = m.short_name || '';
+        const el = document.getElementById('offcanvasAddMeasureUnit');
+        if (el && typeof bootstrap !== 'undefined') {
+          bootstrap.Offcanvas.getOrCreateInstance(el).show();
+        }
+      })
+      .catch(err => {
+        console.error('Measure Unit edit fetch failed:', err);
+        alert('Failed to load measure unit for edit.');
+      });
+  });
+
+  $(document).on('click', '.delete-record', function () {
+    const id = $(this).data('id');
+    if (!confirm('Delete this measure unit?')) return;
+    fetch(`/measure-units/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      }
+    })
+      .then(async r => {
+        const text = await r.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error(text);
+        }
+      })
+      .then(res => {
+        if (res.message) dt.ajax.reload();
+      })
+      .catch(err => {
+        console.error('Measure Unit delete failed:', err);
+        alert('Failed to delete measure unit.');
+      });
+  });
 });

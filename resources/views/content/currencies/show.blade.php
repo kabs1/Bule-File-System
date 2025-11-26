@@ -28,18 +28,13 @@
                     {{ $currency->symbol }}
                 </div>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="mb-3">
-                    <strong>Exchange Rate:</strong>
-                    {{ $currency->exchange_rate }}
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-12">
+           
+            <!-- <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="mb-3">
                     <strong>Default:</strong>
                     {{ $currency->is_default ? 'Yes' : 'No' }}
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>

@@ -43,12 +43,12 @@ class MeasureUnitController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|unique:measure_units,name',
             'short_name' => 'required|unique:measure_units,short_name|max:10',
         ]);
 
-        $measureUnit = MeasureUnit::create($request->all());
+        $measureUnit = MeasureUnit::create($data);
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json(['message' => 'Measure Unit created successfully.', 'id' => $measureUnit->id]);
         }
@@ -58,16 +58,30 @@ class MeasureUnitController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(MeasureUnit $measureUnit)
+    public function show(Request $request, MeasureUnit $measureUnit)
     {
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'id' => $measureUnit->id,
+                'name' => $measureUnit->name,
+                'short_name' => $measureUnit->short_name,
+            ]);
+        }
         return view('content.measure-units.show', compact('measureUnit'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MeasureUnit $measureUnit)
+    public function edit(Request $request, MeasureUnit $measureUnit)
     {
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'id' => $measureUnit->id,
+                'name' => $measureUnit->name,
+                'short_name' => $measureUnit->short_name,
+            ]);
+        }
         return view('content.measure-units.edit', compact('measureUnit'));
     }
 
@@ -76,12 +90,12 @@ class MeasureUnitController extends Controller
      */
     public function update(Request $request, MeasureUnit $measureUnit)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|unique:measure_units,name,' . $measureUnit->id,
             'short_name' => 'required|unique:measure_units,short_name,' . $measureUnit->id . '|max:10',
         ]);
 
-        $measureUnit->update($request->all());
+        $measureUnit->update($data);
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json(['message' => 'Measure Unit updated successfully.']);
         }
@@ -91,7 +105,7 @@ class MeasureUnitController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MeasureUnit $measureUnit)
+    public function destroy(Request $request, MeasureUnit $measureUnit)
     {
         $measureUnit->delete();
         if ($request->ajax() || $request->wantsJson()) {

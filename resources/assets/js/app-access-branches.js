@@ -7,11 +7,16 @@
 document.addEventListener('DOMContentLoaded', function () {
   const dtBranchTable = document.querySelector('.datatables-branches');
   let dt_Branch;
+  const isRtl = $('html').attr('dir') === 'rtl';
 
   // Branches List datatable
   if (dtBranchTable) {
     dt_Branch = new DataTable(dtBranchTable, {
-      ajax: '/app/branches', // AJAX route to fetch branch data
+      ajax: {
+        url: '/app/branches',
+        headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        dataSrc: 'data'
+      },
       columns: [
         // columns according to JSON
         { data: '' }, // For responsive control
@@ -108,6 +113,13 @@ document.addEventListener('DOMContentLoaded', function () {
                   className: 'add-new btn btn-primary',
                   action: function () {
                     const el = document.getElementById('offcanvasAddBranch');
+                    const form = document.getElementById('addBranchForm');
+                    if (form) {
+                      form.reset();
+                      form.removeAttribute('data-branch-id');
+                    }
+                    const label = document.getElementById('offcanvasAddBranchLabel');
+                    if (label) label.textContent = 'Add Branch';
                     if (el && typeof bootstrap !== 'undefined') {
                       const instance = bootstrap.Offcanvas.getOrCreateInstance(el);
                       instance.show();
@@ -253,25 +265,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var addBranchForm = document.getElementById('addBranchForm');
 
-  $(document).on('click', '.edit-record', function () {
-    const branchId = $(this).data('id');
-    fetch(`/app/branches/${branchId}`, { headers: { 'Accept': 'application/json' } })
-      .then(response => response.json())
-      .then(branch => {
-        document.getElementById('modalBranchName').value = branch.name || '';
-        document.getElementById('modalBranchLocation').value = branch.location || '';
-        addBranchForm.setAttribute('data-branch-id', branch.id);
-        const el = document.getElementById('offcanvasAddBranch');
-        if (el && typeof bootstrap !== 'undefined') {
-          const instance = bootstrap.Offcanvas.getOrCreateInstance(el);
-          instance.show();
-        }
-      });
-  });
-
   // Add/Edit Branch Form Validation and Submission
-  addBranchForm.addEventListener('submit', function () {
-    const data = { name: addBranchForm.name.value, location: addBranchForm.location.value };
+  addBranchForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const nameVal = document.getElementById('modalBranchName').value;
+    const descVal = document.getElementById('modalBranchLocation').value;
+    const data = { name: nameVal, location: descVal };
     const branchId = addBranchForm.dataset.branchId;
     const method = branchId ? 'PUT' : 'POST';
     const url = branchId ? `/app/branches/${branchId}` : '/app/branches';
@@ -279,12 +278,20 @@ document.addEventListener('DOMContentLoaded', function () {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
       },
       body: JSON.stringify(data)
     })
-      .then(r => r.json())
+      .then(async r => {
+        const text = await r.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error(text);
+        }
+      })
       .then(res => {
         if (res.message) {
           dt_Branch.ajax.reload();
@@ -294,6 +301,46 @@ document.addEventListener('DOMContentLoaded', function () {
           }
           addBranchForm.reset();
           addBranchForm.removeAttribute('data-branch-id');
+          toastr.success(res.message, 'Success!', {
+            closeButton: true,
+            tapToDismiss: false,
+            rtl: isRtl
+          });
+        } else if (res.errors) {
+          for (const [key, value] of Object.entries(res.errors)) {
+            toastr.error(value, 'Error!', {
+              closeButton: true,
+              tapToDismiss: false,
+              rtl: isRtl
+            });
+          }
+        }
+      })
+      .catch(async err => {
+        console.error('Branch save failed:', err);
+        try {
+          const errorResponse = JSON.parse(err.message);
+          if (errorResponse.errors) {
+            for (const [key, value] of Object.entries(errorResponse.errors)) {
+              toastr.error(value, 'Error!', {
+                closeButton: true,
+                tapToDismiss: false,
+                rtl: isRtl
+              });
+            }
+          } else {
+            toastr.error('Failed to save branch. Please check inputs and try again.', 'Error!', {
+              closeButton: true,
+              tapToDismiss: false,
+              rtl: isRtl
+            });
+          }
+        } catch (e) {
+          toastr.error('An unexpected error occurred. Please try again.', 'Error!', {
+            closeButton: true,
+            tapToDismiss: false,
+            rtl: isRtl
+          });
         }
       });
   });
@@ -305,7 +352,8 @@ document.addEventListener('DOMContentLoaded', function () {
       fetch(`/app/branches/${branchId}`, {
         method: 'DELETE',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
           'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
       })
@@ -324,7 +372,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const branchId = $(this).data('id');
     fetch(`/app/branches/${branchId}`, {
       headers: {
-        'Accept': 'application/json'
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
       }
     })
       .then(response => response.json())
@@ -333,12 +382,12 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('modalBranchLocation').value = branch.location || '';
         const form = document.getElementById('addBranchForm');
         form.setAttribute('data-branch-id', branch.id);
-        const el = document.getElementById('addBranchModal');
+        const el = document.getElementById('offcanvasAddBranch');
+        const label = document.getElementById('offcanvasAddBranchLabel');
+        if (label) label.textContent = 'Edit Branch';
         if (el && typeof bootstrap !== 'undefined') {
-          const instance = bootstrap.Modal.getOrCreateInstance(el);
+          const instance = bootstrap.Offcanvas.getOrCreateInstance(el);
           instance.show();
-        } else {
-          $('#addBranchModal').modal('show');
         }
       })
       .catch(error => console.error('Error fetching branch:', error));

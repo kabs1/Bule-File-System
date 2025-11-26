@@ -3,15 +3,15 @@
 @section('title', 'Branches - Apps')
 
 @section('vendor-style')
-  @vite(['resources/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.scss', 'resources/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.scss', 'resources/assets/vendor/libs/@form-validation/form-validation.scss'])
+  @vite(['resources/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.scss', 'resources/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.scss', 'resources/assets/vendor/libs/@form-validation/form-validation.scss', 'resources/assets/vendor/libs/toastr/toastr.scss'])
 @endsection
 
 @section('vendor-script')
-  @vite(['resources/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js', 'resources/assets/vendor/libs/@form-validation/popular.js', 'resources/assets/vendor/libs/@form-validation/bootstrap5.js', 'resources/assets/vendor/libs/@form-validation/auto-focus.js'])
+  @vite(['resources/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js', 'resources/assets/vendor/libs/@form-validation/popular.js', 'resources/assets/vendor/libs/@form-validation/bootstrap5.js', 'resources/assets/vendor/libs/@form-validation/auto-focus.js', 'resources/assets/vendor/libs/toastr/toastr.js'])
 @endsection
 
 @section('page-script')
-  @vite(['resources/assets/js/app-access-branches.js', 'resources/assets/js/modal-add-branch.js'])
+  @vite(['resources/assets/js/app-access-branches.js'])
 @endsection
 
 @section('content')
@@ -67,7 +67,7 @@
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body mx-0 flex-grow-0 p-6 h-100">
-      <form id="addBranchForm" class="row" onsubmit="return false">
+      <form id="addBranchForm" class="row">
         <div class="col-12 form-control-validation mb-4">
           <label class="form-label" for="modalBranchName">Branch Name</label>
           <input type="text" id="modalBranchName" name="name" class="form-control" />

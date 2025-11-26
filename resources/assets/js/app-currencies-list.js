@@ -15,8 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
       { data: 'name' },
       { data: 'code' },
       { data: 'symbol' },
-      { data: 'exchange_rate' },
-      { data: 'is_default' },
+      // { data: 'is_default' },
       { data: 'actions' }
     ],
     columnDefs: [
@@ -36,8 +35,8 @@ document.addEventListener('DOMContentLoaded', function () {
         render: (data, type, full) => {
           return `
             <div class="d-flex align-items-center">
-              <a href="/currencies/${full.id}/edit" class="btn btn-icon"><i class="icon-base bx bx-edit icon-md"></i></a>
-              <a href="/currencies/${full.id}" class="btn btn-icon"><i class="icon-base bx bx-show icon-md"></i></a>
+              <a href="javascript:;" class="btn btn-icon edit-record" data-id="${full.id}"><i class="icon-base bx bx-edit icon-md"></i></a>
+              <a href="javascript:;" class="btn btn-icon delete-record" data-id="${full.id}"><i class="icon-base bx bx-trash icon-md"></i></a>
             </div>
           `;
         }
@@ -60,6 +59,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 className: 'add-new btn btn-primary',
                 action: function () {
                   const el = document.getElementById('offcanvasAddCurrency');
+                  const form = document.getElementById('addCurrencyForm');
+                  if (form) {
+                    form.reset();
+                    form.removeAttribute('data-id');
+                  }
+                  const label = document.getElementById('offcanvasAddCurrencyLabel');
+                  if (label) label.textContent = 'Add Currency';
                   if (el && typeof bootstrap !== 'undefined') {
                     const instance = bootstrap.Offcanvas.getOrCreateInstance(el);
                     instance.show();
@@ -142,24 +148,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const addCurrencyForm = document.getElementById('addCurrencyForm');
   if (addCurrencyForm) {
-    addCurrencyForm.addEventListener('submit', function () {
+    addCurrencyForm.addEventListener('submit', function (e) {
+      e.preventDefault();
       const data = {
-        name: addCurrencyForm.name.value,
-        code: addCurrencyForm.code.value,
-        symbol: addCurrencyForm.symbol.value,
-        exchange_rate: addCurrencyForm.exchange_rate.value,
-        is_default: addCurrencyForm.is_default.checked ? 1 : 0
+        name: document.getElementById('currency-name').value,
+        code: document.getElementById('currency-code').value,
+        symbol: document.getElementById('currency-symbol').value
+        // is_default: document.getElementById('currency-default').checked ? 1 : 0
       };
-      fetch('/currencies', {
-        method: 'POST',
+      const id = addCurrencyForm.getAttribute('data-id');
+      const method = id ? 'PUT' : 'POST';
+      const url = id ? `/currencies/${id}` : '/currencies';
+      fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
           'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
         body: JSON.stringify(data)
       })
-        .then(r => r.json())
+        .then(async r => {
+          const text = await r.text();
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            throw new Error(text);
+          }
+        })
         .then(res => {
           if (res.message) {
             const el = document.getElementById('offcanvasAddCurrency');
@@ -167,8 +184,71 @@ document.addEventListener('DOMContentLoaded', function () {
               bootstrap.Offcanvas.getOrCreateInstance(el).hide();
             }
             dt.ajax.reload();
+            addCurrencyForm.reset();
+            addCurrencyForm.removeAttribute('data-id');
           }
+        })
+        .catch(err => {
+          console.error('Currency save failed:', err);
+          alert('Failed to save currency. Please check inputs and try again.');
         });
     });
   }
+
+  $(document).on('click', '.edit-record', function () {
+    const id = $(this).data('id');
+    fetch(`/currencies/${id}/edit`, { headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(async r => {
+        const text = await r.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error(text);
+        }
+      })
+      .then(c => {
+        document.getElementById('offcanvasAddCurrencyLabel').textContent = 'Edit Currency';
+        addCurrencyForm.setAttribute('data-id', c.id);
+        document.getElementById('currency-name').value = c.name || '';
+        document.getElementById('currency-code').value = c.code || '';
+        document.getElementById('currency-symbol').value = c.symbol || '';
+        // document.getElementById('currency-default').checked = !!c.is_default;
+        const el = document.getElementById('offcanvasAddCurrency');
+        if (el && typeof bootstrap !== 'undefined') {
+          bootstrap.Offcanvas.getOrCreateInstance(el).show();
+        }
+      })
+      .catch(err => {
+        console.error('Currency edit fetch failed:', err);
+        alert('Failed to load currency for edit.');
+      });
+  });
+
+  $(document).on('click', '.delete-record', function () {
+    const id = $(this).data('id');
+    if (!confirm('Delete this currency?')) return;
+    fetch(`/currencies/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      }
+    })
+      .then(async r => {
+        const text = await r.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error(text);
+        }
+      })
+      .then(res => {
+        if (res.message) dt.ajax.reload();
+      })
+      .catch(err => {
+        console.error('Currency delete failed:', err);
+        alert('Failed to delete currency.');
+      });
+  });
 });

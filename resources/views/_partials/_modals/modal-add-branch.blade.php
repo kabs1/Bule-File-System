@@ -8,7 +8,7 @@
           <h4 class="branch-title mb-2">Add New Branch</h4>
           <p>Branches you may use and assign to your users.</p>
         </div>
-        <form id="addBranchForm" class="row" onsubmit="return false">
+        <form id="addBranchForm" class="row" onsubmit="return false"> 
           <div class="col-12 form-control-validation mb-4">
             <label class="form-label" for="modalBranchName">Branch Name</label>
             <input type="text" id="modalBranchName" name="name" class="form-control"

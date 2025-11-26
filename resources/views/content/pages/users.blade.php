@@ -114,7 +114,7 @@
           </div>
           <div class="mb-6 form-control-validation">
             <label class="form-label" for="add-user-contact">Contact</label>
-            <input type="text" id="add-user-contact" class="form-control phone-mask" placeholder="+1 (609) 988-44-11"
+            <input type="text" id="add-user-contact" class="form-control phone-mask" placeholder="+256 750 000 000"
               aria-label="john.doe@example.com" name="userContact" />
           </div>
           <div class="mb-6 form-control-validation">

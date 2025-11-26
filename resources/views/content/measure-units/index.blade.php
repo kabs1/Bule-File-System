@@ -42,7 +42,7 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body mx-0 flex-grow-0 p-6 h-100">
-        <form id="addMeasureUnitForm" onsubmit="return false">
+        <form id="addMeasureUnitForm">
           <div class="mb-6 form-control-validation">
             <label class="form-label" for="measure-name">Name</label>
             <input type="text" class="form-control" id="measure-name" name="name" />

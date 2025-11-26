@@ -22,11 +22,11 @@ class CurrencyController extends Controller
         $data = $currencies->map(function ($c) {
             return [
                 'id' => $c->id,
-                'name' => $c->name,
-                'code' => $c->code,
-                'symbol' => $c->symbol,
-                'exchange_rate' => $c->exchange_rate,
-                'is_default' => $c->is_default ? 'Yes' : 'No',
+                'name' => $c->currency_name,
+                'code' => $c->code ?? '',
+                'symbol' => $c->currency_symbol ?? '',
+               
+                // 'is_default' => ($c->is_default ?? false) ? 'Yes' : 'No',
                 'actions' => ''
             ];
         });
@@ -46,15 +46,19 @@ class CurrencyController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|unique:currencies,name',
-            'code' => 'required|unique:currencies,code|max:3',
-            'symbol' => 'required|max:5',
-            'exchange_rate' => 'required|numeric',
-            'is_default' => 'boolean',
+        $data = $request->validate([
+            'name' => 'required|unique:currencies,currency_name',
+            'code' => 'nullable|string|max:3',
+            'symbol' => 'required|string|max:5',
+            // 'is_default' => 'nullable|boolean',
         ]);
 
-        $currency = Currency::create($request->all());
+        $currency = Currency::create([
+            'currency_name' => $data['name'],
+            'currency_symbol' => $data['symbol'],
+            // 'is_default' => $data['is_default'] ?? false,
+            'user_id' => auth()->id(),
+        ]);
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json(['message' => 'Currency created successfully.', 'id' => $currency->id]);
@@ -65,16 +69,34 @@ class CurrencyController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Currency $currency)
+    public function show(Request $request, Currency $currency)
     {
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'id' => $currency->id,
+                'name' => $currency->currency_name,
+                'code' => $currency->code ?? '',
+                'symbol' => $currency->currency_symbol ?? '',
+                // 'is_default' => (bool) $currency->is_default,
+            ]);
+        }
         return view('content.currencies.show', compact('currency'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Currency $currency)
+    public function edit(Request $request, Currency $currency)
     {
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'id' => $currency->id,
+                'name' => $currency->currency_name,
+                'code' => $currency->code ?? '',
+                'symbol' => $currency->currency_symbol ?? '',
+                // 'is_default' => (bool) $currency->is_default,
+            ]);
+        }
         return view('content.currencies.edit', compact('currency'));
     }
 
@@ -83,15 +105,19 @@ class CurrencyController extends Controller
      */
     public function update(Request $request, Currency $currency)
     {
-        $request->validate([
-            'name' => 'required|unique:currencies,name,' . $currency->id,
-            'code' => 'required|unique:currencies,code,' . $currency->id . '|max:3',
-            'symbol' => 'required|max:5',
-            'exchange_rate' => 'required|numeric',
-            'is_default' => 'boolean',
+        $data = $request->validate([
+            'name' => 'required|unique:currencies,currency_name,' . $currency->id,
+            'code' => 'nullable|string|max:3',
+            'symbol' => 'required|string|max:5',
+            // 'is_default' => 'nullable|boolean',
         ]);
 
-        $currency->update($request->all());
+        $currency->update([
+            'currency_name' => $data['name'],
+            'currency_symbol' => $data['symbol'],
+            // 'is_default' => $data['is_default'] ?? false,
+            'user_id' => auth()->id(),
+        ]);
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json(['message' => 'Currency updated successfully.']);
         }
@@ -101,7 +127,7 @@ class CurrencyController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Currency $currency)
+    public function destroy(Request $request, Currency $currency)
     {
         $currency->delete();
         if ($request->ajax() || $request->wantsJson()) {

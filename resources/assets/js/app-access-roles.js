@@ -115,9 +115,12 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 {
                   text: '<i class="icon-base bx bx-plus icon-sm me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add New Role</span>',
                   className: 'add-new btn btn-primary',
-                  attr: {
-                    'data-bs-toggle': 'offcanvas',
-                    'data-bs-target': '#offcanvasAddRole'
+                  action: function () {
+                    const el = document.getElementById('addRoleModal');
+                    if (el && typeof bootstrap !== 'undefined') {
+                      const instance = bootstrap.Modal.getOrCreateInstance(el);
+                      instance.show();
+                    }
                   }
                 }
               ]
@@ -381,11 +384,20 @@ document.addEventListener('DOMContentLoaded', function (e) {
       method: method,
       headers: {
         'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
       },
       body: JSON.stringify(data)
     })
-      .then(response => response.json())
+      .then(async response => {
+        const text = await response.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error(text);
+        }
+      })
       .then(result => {
         if (result.message) {
           alert(result.message);
@@ -407,15 +419,31 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   // Delete role functionality
   $(document).on('click', '.delete-record', function () {
-    const roleId = $(this).data('id'); // Assuming role ID is passed via data-id attribute
+    const rowEl = $(this).closest('tr');
+    let roleId;
+    try {
+      const rowData = dt_Role.row(rowEl).data();
+      roleId = rowData && rowData.id ? rowData.id : $(this).data('id');
+    } catch (e) {
+      roleId = $(this).data('id');
+    }
     if (confirm('Are you sure you want to delete this role?')) {
       fetch(`/app/roles/${roleId}`, {
         method: 'DELETE',
         headers: {
+          Accept: 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
           'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
       })
-        .then(response => response.json())
+        .then(async response => {
+          const text = await response.text();
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            throw new Error(text);
+          }
+        })
         .then(result => {
           if (result.message) {
             alert(result.message);
