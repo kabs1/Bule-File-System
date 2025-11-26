@@ -30,27 +30,28 @@
                 <th></th>
                 <th></th>
                 <th>Name</th>
-                <th>Location</th>
+                <th>Description</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-                @foreach ($branches as $branch)
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td>{{ $branch->name }}</td>
-                        <td>{{ $branch->location }}</td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-primary edit-record" data-id="{{ $branch->id }}">Edit</a>
-                            <form action="#" method="POST" style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger delete-record" data-id="{{ $branch->id }}">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
+              @foreach ($branches as $branch)
+                <tr data-id="{{ $branch->branch_id }}">
+                  <td></td>
+                  <td></td>
+                  <td>{{ $branch->branch_name }}</td>
+                  <td>{{ $branch->description }}</td>
+                  <td>
+                    <a href="#" class="btn btn-sm btn-primary edit-record" data-id="{{ $branch->branch_id }}">Edit</a>
+                    <form action="#" method="POST" style="display:inline-block;">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" class="btn btn-sm btn-danger delete-record"
+                        data-id="{{ $branch->branch_id }}">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+              @endforeach
             </tbody>
           </table>
         </div>
@@ -60,7 +61,27 @@
   </div>
   <!--/ Branch cards -->
 
-  <!-- Add Branch Modal -->
-  @include('_partials/_modals/modal-add-branch')
-  <!-- / Add Branch Modal -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddBranch" aria-labelledby="offcanvasAddBranchLabel">
+    <div class="offcanvas-header border-bottom">
+      <h5 id="offcanvasAddBranchLabel" class="offcanvas-title">Add Branch</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body mx-0 flex-grow-0 p-6 h-100">
+      <form id="addBranchForm" class="row" onsubmit="return false">
+        <div class="col-12 form-control-validation mb-4">
+          <label class="form-label" for="modalBranchName">Branch Name</label>
+          <input type="text" id="modalBranchName" name="name" class="form-control" />
+        </div>
+        <div class="col-12 form-control-validation mb-4">
+          <label class="form-label" for="modalBranchLocation">Description</label>
+          <input type="text" id="modalBranchLocation" name="location" class="form-control" />
+        </div>
+        <div class="col-12 text-center demo-vertical-spacing">
+          <button type="submit" class="btn btn-primary me-sm-4 me-1 data-submit">Submit</button>
+          <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="offcanvas"
+            aria-label="Close">Discard</button>
+        </div>
+      </form>
+    </div>
+  </div>
 @endsection

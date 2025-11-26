@@ -12,9 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('branches', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique();
-            $table->string('location')->nullable();
+            $table->bigIncrements('branch_id');
+            $table->string('branch_name', 200)->unique();
+            $table->string('description', 200)->nullable();
+            $table->timestamp('date_created')->useCurrent();
+            $table->timestamp('date_updated')->nullable()->useCurrentOnUpdate();
+            $table->bigInteger('user_id');
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

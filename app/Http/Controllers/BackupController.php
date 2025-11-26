@@ -48,7 +48,7 @@ public function index()
         ->flatMap(function ($backupDestination) {
             // Get the string name of the disk from the destination object
             $diskName = $backupDestination->diskName(); // <-- Key change: use diskName()
-            
+
             return $backupDestination->backups()->map(function ($backup) use ($diskName) {
                 return [
                     'date' => $backup->date()->format('Y-m-d H:i:s'),
@@ -60,6 +60,27 @@ public function index()
         })->toArray();
 
     return view('content.backups.index', compact('backups'));
+}
+
+public function list(Request $request)
+{
+    $this->authorize('backup.view');
+    $config = Config::fromArray(config('backup'));
+    $backups = collect(BackupDestinationFactory::createFromArray($config))
+        ->flatMap(function ($backupDestination) {
+            $diskName = $backupDestination->diskName();
+            return $backupDestination->backups()->map(function ($backup) use ($diskName) {
+                return [
+                    'date' => $backup->date()->format('Y-m-d H:i:s'),
+                    'size' => Format::humanReadableSize($backup->sizeInBytes()),
+                    'path' => $backup->path(),
+                    'disk' => $diskName,
+                    'actions' => ''
+                ];
+            });
+        })->toArray();
+
+    return response()->json(['data' => $backups]);
 }
 
     public function create()
@@ -80,7 +101,7 @@ public function index()
 
     $backupDestination = BackupDestinationFactory::createFromDiskName($disk);
     $backup = $backupDestination->backups()->first(fn ($backup) => $backup->path() === $path);
-    
+
     if (!$backup) {
             abort(404, 'Backup not found.');
         }

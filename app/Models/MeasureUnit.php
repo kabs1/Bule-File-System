@@ -9,9 +9,20 @@ use Spatie\Activitylog\LogOptions;
 class MeasureUnit extends Model
 {
     use LogsActivity;
+    protected $table = 'measure_units';
+    protected $primaryKey = 'id';
+
     protected $fillable = [
-        'name',
-        'short_name',
+        'unit_name',
+        'unit_symbol',
+        'date_created',
+        'date_updated',
+        'user_id',
+    ];
+
+    protected $casts = [
+        'date_created' => 'datetime',
+        'date_updated' => 'datetime',
     ];
 
     public function getActivitylogOptions(): LogOptions

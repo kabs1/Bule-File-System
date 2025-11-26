@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Group extends Model
+{
+    use HasFactory;
+
+    protected $table = 'groups';
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
+        'group_code',
+        'date_created',
+        'date_updated',
+        'user_id',
+        'branch_id',
+    ];
+
+    protected $casts = [
+        'date_created' => 'datetime',
+        'date_updated' => 'datetime',
+    ];
+}

@@ -15,7 +15,7 @@
 @endsection
 
 @section('content')
-<div class="row g-6 mb-6">
+  <div class="row g-6 mb-6">
     <div class="col-sm-6 col-xl-3">
       <div class="card">
         <div class="card-body">
@@ -38,27 +38,27 @@
       </div>
     </div>
     @foreach ($roleCounts as $roleName => $userCount)
-    <div class="col-sm-6 col-xl-3">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex align-items-start justify-content-between">
-            <div class="content-left">
-              <span class="text-heading">{{ $roleName }} Users</span>
-              <div class="d-flex align-items-center my-1">
-                <h4 class="mb-0 me-2">{{ $userCount }}</h4>
-                <p class="text-success mb-0">(+XX%)</p> {{-- Percentage is still hardcoded, can be improved later --}}
+      <div class="col-sm-6 col-xl-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex align-items-start justify-content-between">
+              <div class="content-left">
+                <span class="text-heading">{{ $roleName }} Users</span>
+                <div class="d-flex align-items-center my-1">
+                  <h4 class="mb-0 me-2">{{ $userCount }}</h4>
+                  <p class="text-success mb-0">(+XX%)</p> {{-- Percentage is still hardcoded, can be improved later --}}
+                </div>
+                <small class="mb-0">Total {{ $roleName }} Users</small>
               </div>
-              <small class="mb-0">Total {{ $roleName }} Users</small>
-            </div>
-            <div class="avatar">
-              <span class="avatar-initial rounded bg-label-info">
-                <i class="icon-base bx bx-user icon-lg"></i>
-              </span>
+              <div class="avatar">
+                <span class="avatar-initial rounded bg-label-info">
+                  <i class="icon-base bx bx-user icon-lg"></i>
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     @endforeach
   </div>
   <!-- Users List Table -->
@@ -69,6 +69,7 @@
         <div class="col-md-4 user_role"></div>
         <div class="col-md-4 user_status"></div>
         <div class="col-md-4 user_created_by"></div>
+        <div class="col-md-4 user_branch"></div>
       </div>
     </div>
     <div class="card-datatable">
@@ -107,7 +108,8 @@
           </div>
           <div class="mb-6 form-control-validation">
             <label class="form-label" for="add-user-password">Password</label>
-            <input type="password" id="add-user-password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+            <input type="password" id="add-user-password" class="form-control"
+              placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
               aria-label="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" name="password" />
           </div>
           <div class="mb-6 form-control-validation">
@@ -128,7 +130,7 @@
             <select id="user-branch" name="branchId" class="form-select">
               <option value="">Select Branch</option>
               @foreach ($branches as $branch)
-                <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                <option value="{{ $branch->branch_id }}">{{ $branch->branch_name }}</option>
               @endforeach
             </select>
           </div>

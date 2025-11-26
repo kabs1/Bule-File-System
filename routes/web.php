@@ -37,6 +37,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::put('/app/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::get('/app/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::delete('/app/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::put('/app/users/{user}/suspend', [UserController::class, 'suspend'])->name('users.suspend');
+    Route::put('/app/users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
 
     // Role Management Routes
     Route::get('/app/roles/list', [RoleController::class, 'list'])->name('roles.list');
@@ -65,13 +67,16 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     // Currency Management Routes
     Route::resource('currencies', App\Http\Controllers\CurrencyController::class);
+    Route::get('/app/currencies/list', [App\Http\Controllers\CurrencyController::class, 'list'])->name('currencies.list');
 
     // Measure Unit Management Routes
     Route::resource('measure-units', App\Http\Controllers\MeasureUnitController::class);
+    Route::get('/app/measure-units/list', [App\Http\Controllers\MeasureUnitController::class, 'list'])->name('measure-units.list');
 
     // Backup Management Routes
     Route::group(['prefix' => 'backups', 'as' => 'backups.'], function () {
         Route::get('/', [BackupController::class, 'index'])->name('index');
+        Route::get('/list', [BackupController::class, 'list'])->name('list');
         Route::post('/create', [BackupController::class, 'create'])->name('create');
         Route::get('/download/{disk}/{path}', [BackupController::class, 'download'])->name('download')->where('path', '.*');
         Route::delete('/delete/{disk}/{path}', [BackupController::class, 'delete'])->name('delete')->where('path', '.*');
@@ -80,6 +85,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // Activity Log Routes
     Route::group(['prefix' => 'activity-log', 'as' => 'activity-log.'], function () {
         Route::get('/', [ActivityLogController::class, 'index'])->name('index');
+        Route::get('/list', [ActivityLogController::class, 'list'])->name('list');
         Route::delete('/delete/{id}', [ActivityLogController::class, 'destroy'])->name('delete');
     });
 });

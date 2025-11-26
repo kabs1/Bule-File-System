@@ -18,7 +18,10 @@
 
           <div class="mb-3">
             <label for="system_name" class="form-label">System Name</label>
-            <input type="text" class="form-control" id="system_name" name="system_name" value="{{ $settings['system_name']->value ?? '' }}">
+            <input type="text" class="form-control @error('system_name') is-invalid @enderror" id="system_name" name="system_name" value="{{ old('system_name', $settings['system_name']->value ?? '') }}">
+            @error('system_name')
+              <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
           </div>
 
           <div class="mb-3">
@@ -28,7 +31,10 @@
                 <img src="{{ asset($settings['system_logo']->value) }}" alt="System Logo" class="img-thumbnail" width="150">
               </div>
             @endif
-            <input type="file" class="form-control" id="system_logo" name="system_logo">
+            <input type="file" class="form-control @error('system_logo') is-invalid @enderror" id="system_logo" name="system_logo">
+            @error('system_logo')
+              <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
           </div>
 
           <hr class="my-4">
@@ -121,7 +127,7 @@
             <!-- Primary Color -->
             <div class="m-0 px-6 pb-6 w-100">
               <label for="primaryColor" class="form-label d-block mb-2">Primary Color (Hex)</label>
-              <input type="text" class="form-control" id="primaryColor" name="primaryColor" value="{{ $settings['primaryColor']->value ?? '' }}">
+              <input type="color" class="form-control form-control-color" id="primaryColor" name="primaryColor" value="{{ $settings['primaryColor']->value ?? '#696cff' }}">
             </div>
             <hr class="m-0 px-6 my-6" />
           </div>

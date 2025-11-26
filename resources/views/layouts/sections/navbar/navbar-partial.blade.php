@@ -112,7 +112,7 @@ use Illuminate\Support\Facades\Route;
           </a>
         </li>
         @endif
-        <li>
+        <!-- <li>
           <a class="dropdown-item" href="javascript:void(0);">
             <span class="d-flex align-items-center align-middle">
               <i class="flex-shrink-0 icon-base bx bx-credit-card icon-md me-3"></i>
@@ -120,7 +120,7 @@ use Illuminate\Support\Facades\Route;
               <span class="flex-shrink-0 badge rounded-pill bg-danger">4</span>
             </span>
           </a>
-        </li>
+        </li> -->
         @if (Auth::User() && Laravel\Jetstream\Jetstream::hasTeamFeatures())
         <li>
           <div class="dropdown-divider my-1"></div>

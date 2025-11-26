@@ -1,60 +1,47 @@
-@extends('layouts.contentNavbarLayout')
+@extends('layouts/layoutMaster')
 
 @section('title', 'Activity Log')
 
 @section('content')
-<h4 class="py-3 mb-4">
+  <h4 class="py-3 mb-4">
     <span class="text-muted fw-light">Activity Log /</span> Overview
-</h4>
+  </h4>
+
+@section('vendor-style')
+  @vite(['resources/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.scss', 'resources/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.scss', 'resources/assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.scss'])
+@endsection
+
+@section('vendor-script')
+  @vite(['resources/assets/vendor/libs/moment/moment.js', 'resources/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js'])
+@endsection
+
+@section('page-script')
+  @vite('resources/assets/js/app-activity-log-list.js')
+@endsection
 
 <div class="card">
-    <div class="card-header">
-        <h5 class="card-title mb-0">System Activity</h5>
+  <div class="card-header border-bottom">
+    <h5 class="card-title mb-0">System Activity</h5>
+    <div class="d-flex justify-content-between align-items-center row pt-4 gap-md-0 g-6">
+      <div class="col-md-4 activity_event"></div>
+      <div class="col-md-4 activity_causer"></div>
     </div>
-    <div class="card-body">
-        <div class="table-responsive text-nowrap">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Causer</th>
-                        <th>Event</th>
-                        <th>Subject</th>
-                        <th>Description</th>
-                        <th>Changes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($activity as $log)
-                    <tr>
-                        <td>{{ $log->created_at->format('Y-m-d H:i:s') }}</td>
-                        <td>{{ $log->causer ? $log->causer->name : 'System' }}</td>
-                        <td>{{ $log->event }}</td>
-                        <td>{{ $log->subject_type ? class_basename($log->subject_type) . ' (ID: ' . $log->subject_id . ')' : 'N/A' }}</td>
-                        <td>{{ $log->description }}</td>
-                        <td>
-                            @if ($log->changes && $log->changes->has('attributes'))
-                                <ul>
-                                    @foreach ($log->changes['attributes'] as $key => $value)
-                                        <li><strong>{{ $key }}:</strong> {{ $value }}</li>
-                                    @endforeach
-                                </ul>
-                            @else
-                                No changes recorded.
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6">No activity logs found.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        <div class="mt-3">
-            {{ $activity->links() }}
-        </div>
-    </div>
+  </div>
+  <div class="card-datatable">
+    <table class="datatables-activity table border-top">
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th>Date</th>
+          <th>Causer</th>
+          <th>Event</th>
+          <th>Subject</th>
+          <th>Description</th>
+          <th>Changes</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
 </div>
 @endsection

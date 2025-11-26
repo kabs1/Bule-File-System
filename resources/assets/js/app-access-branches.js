@@ -67,10 +67,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return `
               <div class="d-flex align-items-center">
                 <a href="javascript:;" class="btn btn-icon delete-record" data-id="${full.id}"><i class="icon-base bx bx-trash icon-md"></i></a>
-                <a href="javascript:;" class class="btn btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded icon-md"></i></a>
+                <a href="javascript:;" class="btn btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded icon-md"></i></a>
                 <div class="dropdown-menu dropdown-menu-end m-0">
                   <a href="javascript:;" class="dropdown-item edit-record" data-id="${full.id}">Edit</a>
-                  <a href="javascript:;" class="dropdown-item">Suspend</a>
                 </div>
               </div>
             `;
@@ -107,9 +106,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 {
                   text: '<i class="icon-base bx bx-plus icon-sm me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add New Branch</span>',
                   className: 'add-new btn btn-primary',
-                  attr: {
-                    'data-bs-toggle': 'modal',
-                    'data-bs-target': '#addBranchModal'
+                  action: function () {
+                    const el = document.getElementById('offcanvasAddBranch');
+                    if (el && typeof bootstrap !== 'undefined') {
+                      const instance = bootstrap.Offcanvas.getOrCreateInstance(el);
+                      instance.show();
+                    }
                   }
                 }
               ]
@@ -249,100 +251,50 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }, 100);
 
-  var branchEditList = document.querySelectorAll('.branch-edit-modal'),
-    branchAdd = document.querySelector('.add-new-branch'),
-    branchTitle = document.querySelector('.branch-title'),
-    addBranchForm = document.getElementById('addBranchForm');
+  var addBranchForm = document.getElementById('addBranchForm');
 
-  if (branchAdd) {
-    branchAdd.onclick = function () {
-      branchTitle.innerHTML = 'Add New Branch';
-      addBranchForm.reset();
-      addBranchForm.removeAttribute('data-branch-id');
-    };
-  }
-  if (branchEditList) {
-    branchEditList.forEach(function (branchEditEl) {
-      branchEditEl.onclick = function () {
-        branchTitle.innerHTML = 'Edit Branch';
-        const branchId = this.closest('tr').dataset.id; // Assuming branch ID is stored in data-id of the row
-        addBranchForm.setAttribute('data-branch-id', branchId);
-
-        fetch(`/app/branches/${branchId}`)
-          .then(response => response.json())
-          .then(branch => {
-            document.getElementById('modalBranchName').value = branch.name;
-            document.getElementById('modalBranchLocation').value = branch.location;
-          })
-          .catch(error => console.error('Error fetching branch for edit:', error));
-      };
-    });
-  }
+  $(document).on('click', '.edit-record', function () {
+    const branchId = $(this).data('id');
+    fetch(`/app/branches/${branchId}`, { headers: { 'Accept': 'application/json' } })
+      .then(response => response.json())
+      .then(branch => {
+        document.getElementById('modalBranchName').value = branch.name || '';
+        document.getElementById('modalBranchLocation').value = branch.location || '';
+        addBranchForm.setAttribute('data-branch-id', branch.id);
+        const el = document.getElementById('offcanvasAddBranch');
+        if (el && typeof bootstrap !== 'undefined') {
+          const instance = bootstrap.Offcanvas.getOrCreateInstance(el);
+          instance.show();
+        }
+      });
+  });
 
   // Add/Edit Branch Form Validation and Submission
-  const fvBranch = FormValidation.formValidation(addBranchForm, {
-    fields: {
-      name: {
-        validators: {
-          notEmpty: {
-            message: 'Please enter branch name'
-          }
-        }
-      },
-      location: {
-        validators: {
-          notEmpty: {
-            message: 'Please enter branch location'
-          }
-        }
-      }
-    },
-    plugins: {
-      trigger: new FormValidation.plugins.Trigger(),
-      bootstrap5: new FormValidation.plugins.Bootstrap5({
-        eleValidClass: '',
-        rowSelector: '.form-control-validation'
-      }),
-      submitButton: new FormValidation.plugins.SubmitButton(),
-      autoFocus: new FormValidation.plugins.AutoFocus()
-    }
-  }).on('core.form.valid', function () {
-    const form = addBranchForm;
-    const formData = new FormData(form);
-    const data = {
-      name: formData.get('name'),
-      location: formData.get('location'),
-    };
-
-    const branchId = form.dataset.branchId;
+  addBranchForm.addEventListener('submit', function () {
+    const data = { name: addBranchForm.name.value, location: addBranchForm.location.value };
+    const branchId = addBranchForm.dataset.branchId;
     const method = branchId ? 'PUT' : 'POST';
     const url = branchId ? `/app/branches/${branchId}` : '/app/branches';
-
     fetch(url, {
-      method: method,
+      method,
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
       },
       body: JSON.stringify(data)
     })
-      .then(response => response.json())
-      .then(result => {
-        if (result.message) {
-          alert(result.message);
+      .then(r => r.json())
+      .then(res => {
+        if (res.message) {
           dt_Branch.ajax.reload();
-          $('#addBranchModal').modal('hide');
-        } else if (result.errors) {
-          for (const field in result.errors) {
-            if (result.errors.hasOwnProperty(field)) {
-              alert(result.errors[field][0]);
-            }
+          const el = document.getElementById('offcanvasAddBranch');
+          if (el && typeof bootstrap !== 'undefined') {
+            bootstrap.Offcanvas.getOrCreateInstance(el).hide();
           }
+          addBranchForm.reset();
+          addBranchForm.removeAttribute('data-branch-id');
         }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while saving the branch.');
       });
   });
 
@@ -353,6 +305,7 @@ document.addEventListener('DOMContentLoaded', function () {
       fetch(`/app/branches/${branchId}`, {
         method: 'DELETE',
         headers: {
+          'Accept': 'application/json',
           'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
       })
@@ -365,5 +318,29 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(error => console.error('Error deleting branch:', error));
     }
+  });
+
+  $(document).on('click', '.edit-record', function () {
+    const branchId = $(this).data('id');
+    fetch(`/app/branches/${branchId}`, {
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(branch => {
+        document.getElementById('modalBranchName').value = branch.name || '';
+        document.getElementById('modalBranchLocation').value = branch.location || '';
+        const form = document.getElementById('addBranchForm');
+        form.setAttribute('data-branch-id', branch.id);
+        const el = document.getElementById('addBranchModal');
+        if (el && typeof bootstrap !== 'undefined') {
+          const instance = bootstrap.Modal.getOrCreateInstance(el);
+          instance.show();
+        } else {
+          $('#addBranchModal').modal('show');
+        }
+      })
+      .catch(error => console.error('Error fetching branch:', error));
   });
 });

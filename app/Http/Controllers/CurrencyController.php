@@ -16,6 +16,23 @@ class CurrencyController extends Controller
         return view('content.currencies.index', compact('currencies'));
     }
 
+    public function list(Request $request)
+    {
+        $currencies = Currency::all();
+        $data = $currencies->map(function ($c) {
+            return [
+                'id' => $c->id,
+                'name' => $c->name,
+                'code' => $c->code,
+                'symbol' => $c->symbol,
+                'exchange_rate' => $c->exchange_rate,
+                'is_default' => $c->is_default ? 'Yes' : 'No',
+                'actions' => ''
+            ];
+        });
+        return response()->json(['data' => $data]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -37,10 +54,12 @@ class CurrencyController extends Controller
             'is_default' => 'boolean',
         ]);
 
-        Currency::create($request->all());
+        $currency = Currency::create($request->all());
 
-        return redirect()->route('currencies.index')
-            ->with('success', 'Currency created successfully.');
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['message' => 'Currency created successfully.', 'id' => $currency->id]);
+        }
+        return redirect()->route('currencies.index')->with('success', 'Currency created successfully.');
     }
 
     /**
@@ -73,9 +92,10 @@ class CurrencyController extends Controller
         ]);
 
         $currency->update($request->all());
-
-        return redirect()->route('currencies.index')
-            ->with('success', 'Currency updated successfully.');
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['message' => 'Currency updated successfully.']);
+        }
+        return redirect()->route('currencies.index')->with('success', 'Currency updated successfully.');
     }
 
     /**
@@ -84,8 +104,9 @@ class CurrencyController extends Controller
     public function destroy(Currency $currency)
     {
         $currency->delete();
-
-        return redirect()->route('currencies.index')
-            ->with('success', 'Currency deleted successfully.');
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['message' => 'Currency deleted successfully.']);
+        }
+        return redirect()->route('currencies.index')->with('success', 'Currency deleted successfully.');
     }
 }

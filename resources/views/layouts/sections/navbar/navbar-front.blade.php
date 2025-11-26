@@ -63,7 +63,7 @@ $activeClass = in_array($currentRouteName, $activeRoutes) ? 'active' : '';
                 <li>
                     <a href="javascript:;" class="btn btn-primary" target="_blank">
                         <span class="icon-base bx bx-log-in-circle scaleX-n1-rtl me-md-1"></span>
-                        <span class="d-none d-md-block">Login/Register</span>
+                        <span class="d-none d-md-block">Login</span>
                     </a>
                 </li>
                 <!-- navbar button: End -->

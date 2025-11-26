@@ -9,12 +9,21 @@ use Spatie\Activitylog\LogOptions;
 class Currency extends Model
 {
     use LogsActivity;
+    protected $primaryKey = 'id';
+
     protected $fillable = [
-        'name',
-        'code',
-        'symbol',
+        'currency_name',
+        'currency_symbol',
+        'date_created',
+        'date_updated',
+        'user_id',
         'exchange_rate',
         'is_default',
+    ];
+
+    protected $casts = [
+        'date_created' => 'datetime',
+        'date_updated' => 'datetime',
     ];
 
     public function getActivitylogOptions(): LogOptions

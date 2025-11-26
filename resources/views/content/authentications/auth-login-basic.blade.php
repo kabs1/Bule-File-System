@@ -37,8 +37,8 @@ $customizerHidden = 'customizer-hide';
                         </a>
                     </div>
                     <!-- /Logo -->
-                    <h4 class="mb-1">Welcome to {{ config('variables.templateName') }}! 👋</h4>
-                    <p class="mb-6">Please sign-in to your account and start the adventure</p>
+                    <h4 class="mb-1">Welcome to {{ config('variables.templateName') }}</h4>
+                    <p class="mb-6">Please sign-in to your account to get access</p>
 
                     <form id="formAuthentication" class="mb-6" action="{{ url('/') }}" method="GET">
                         <div class="mb-6 form-control-validation">
@@ -68,7 +68,7 @@ $customizerHidden = 'customizer-hide';
                         </div>
                     </form>
 
-                    <p class="text-center">
+                    <!-- <p class="text-center">
                         <span>New on our platform?</span>
                         <a href="{{ url('auth/register-basic') }}">
                             <span>Create an account</span>
@@ -95,7 +95,7 @@ $customizerHidden = 'customizer-hide';
                         <a href="javascript:;" class="btn btn-icon rounded-circle btn-text-google-plus">
                             <i class="icon-base bx bxl-google"></i>
                         </a>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <!-- /Login -->

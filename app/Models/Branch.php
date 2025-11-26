@@ -12,9 +12,20 @@ class Branch extends Model
     use LogsActivity;
     use HasFactory;
 
+    protected $primaryKey = 'branch_id';
+
     protected $fillable = [
-        'name',
-        'location',
+        'branch_name',
+        'description',
+        'date_created',
+        'date_updated',
+        'user_id',
+        'status',
+    ];
+
+    protected $casts = [
+        'date_created' => 'datetime',
+        'date_updated' => 'datetime',
     ];
 
     public function getActivitylogOptions(): LogOptions

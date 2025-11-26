@@ -22,8 +22,12 @@ class DatabaseSeeder extends Seeder
         $superUser = User::firstOrCreate(
             ['email' => 'superadmin@example.com'],
             [
-                'name' => 'Super Admin',
+                'first_name' => 'Super',
+                'last_name' => 'Admin',
+                'username' => 'superadmin',
                 'password' => Hash::make('password'), // You should change this in production
+                'role_id' => $superAdminRole->id, // Assign the role_id
+                'status' => 1,
             ]
         );
 
@@ -49,8 +53,12 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'test@example.com'],
             [
-                'name' => 'Test User',
+                'first_name' => 'Test',
+                'last_name' => 'User',
+                'username' => 'testuser',
                 'password' => Hash::make('password'),
+                'role_id' => $superAdminRole->id, // Assign a role_id, assuming 'Super Admin' for now
+                'status' => 1,
             ]
         );
     }

@@ -16,6 +16,20 @@ class MeasureUnitController extends Controller
         return view('content.measure-units.index', compact('measureUnits'));
     }
 
+    public function list(Request $request)
+    {
+        $measureUnits = MeasureUnit::all();
+        $data = $measureUnits->map(function ($m) {
+            return [
+                'id' => $m->id,
+                'name' => $m->name,
+                'short_name' => $m->short_name,
+                'actions' => ''
+            ];
+        });
+        return response()->json(['data' => $data]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -34,10 +48,11 @@ class MeasureUnitController extends Controller
             'short_name' => 'required|unique:measure_units,short_name|max:10',
         ]);
 
-        MeasureUnit::create($request->all());
-
-        return redirect()->route('measure-units.index')
-            ->with('success', 'Measure Unit created successfully.');
+        $measureUnit = MeasureUnit::create($request->all());
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['message' => 'Measure Unit created successfully.', 'id' => $measureUnit->id]);
+        }
+        return redirect()->route('measure-units.index')->with('success', 'Measure Unit created successfully.');
     }
 
     /**
@@ -67,9 +82,10 @@ class MeasureUnitController extends Controller
         ]);
 
         $measureUnit->update($request->all());
-
-        return redirect()->route('measure-units.index')
-            ->with('success', 'Measure Unit updated successfully.');
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['message' => 'Measure Unit updated successfully.']);
+        }
+        return redirect()->route('measure-units.index')->with('success', 'Measure Unit updated successfully.');
     }
 
     /**
@@ -78,8 +94,9 @@ class MeasureUnitController extends Controller
     public function destroy(MeasureUnit $measureUnit)
     {
         $measureUnit->delete();
-
-        return redirect()->route('measure-units.index')
-            ->with('success', 'Measure Unit deleted successfully.');
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['message' => 'Measure Unit deleted successfully.']);
+        }
+        return redirect()->route('measure-units.index')->with('success', 'Measure Unit deleted successfully.');
     }
 }

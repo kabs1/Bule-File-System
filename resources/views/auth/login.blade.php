@@ -34,8 +34,8 @@ $customizerHidden = 'customizer-hide';
     <!-- Login -->
     <div class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg p-sm-12 p-6">
       <div class="w-px-400 mx-auto mt-sm-12 mt-8">
-        <h4 class="mb-1">Welcome to {{ config('variables.templateName') }}! 👋</h4>
-        <p class="mb-6">Please sign-in to your account and start the adventure</p>
+        <h4 class="mb-1">Welcome to {{ config('variables.templateName') }}</h4>
+        <p class="mb-6">Please sign-in to your account to get access</p>
 
         @if (session('status'))
         <div class="alert alert-success mb-1 rounded-0" role="alert">
@@ -87,20 +87,20 @@ $customizerHidden = 'customizer-hide';
           <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
         </form>
 
-        <p class="text-center">
+        <!-- <p class="text-center">
           <span>New on our platform?</span>
           @if (Route::has('register'))
           <a href="{{ route('register') }}">
             <span>Create an account</span>
           </a>
           @endif
-        </p>
+        </p> -->
 
-        <div class="divider my-6">
+        <!-- <div class="divider my-6">
           <div class="divider-text">or</div>
-        </div>
+        </div> -->
 
-        <div class="d-flex justify-content-center">
+        <!-- <div class="d-flex justify-content-center">
           <a href="javascript:;" class="btn btn-sm btn-icon rounded-circle btn-text-facebook me-1_5">
             <i class="icon-base bx bxl-facebook-circle icon-20px"></i>
           </a>
@@ -116,7 +116,7 @@ $customizerHidden = 'customizer-hide';
           <a href="javascript:;" class="btn btn-sm btn-icon rounded-circle btn-text-google-plus">
             <i class="icon-base bx bxl-google icon-20px"></i>
           </a>
-        </div>
+        </div> -->
       </div>
     </div>
     <!-- /Login -->

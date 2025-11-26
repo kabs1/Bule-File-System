@@ -167,6 +167,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
           searchable: false,
           orderable: false,
           render: (data, type, full, meta) => {
+            const isActive = full.status === 2;
+            const actionItem = isActive
+              ? `<a href="javascript:;" class="dropdown-item suspend-record" data-id="${full.id}">Suspend</a>`
+              : `<a href="javascript:;" class="dropdown-item activate-record" data-id="${full.id}">Activate</a>`;
             return `
               <div class="d-flex align-items-center">
                 <a href="javascript:;" class="btn btn-icon delete-record" data-id="${full.id}">
@@ -180,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 </a>
                 <div class="dropdown-menu dropdown-menu-end m-0">
                   <a href="javascript:;" class="dropdown-item edit-record" data-id="${full.id}">Edit</a>
-                  <a href="javascript:;" class="dropdown-item">Suspend</a>
+                  ${actionItem}
                 </div>
               </div>
             `;
@@ -422,7 +426,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
           select.id = selectId;
           select.className = 'form-select text-capitalize';
           select.innerHTML = `<option value="">${defaultOptionText}</option>`;
-          document.querySelector(containerClass).appendChild(select);
+          const container = document.querySelector(containerClass);
+          if (!container) return;
+          container.appendChild(select);
 
           // Add event listener for filtering
           select.addEventListener('change', () => {
@@ -681,7 +687,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
         if (error instanceof SyntaxError && error.message.includes('Unexpected token')) {
           // This means the response was likely HTML, not JSON
           console.error('Received HTML instead of JSON. Possible redirection or server error.');
-          alert('An unexpected server response occurred. Please check if you are logged in or if there is a server error.');
+          alert(
+            'An unexpected server response occurred. Please check if you are logged in or if there is a server error.'
+          );
         } else {
           alert('An error occurred while saving the user. Check console for details.');
         }
@@ -691,17 +699,23 @@ document.addEventListener('DOMContentLoaded', function (e) {
   // Edit user functionality
   $(document).on('click', '.edit-record', function () {
     const userId = $(this).data('id');
-    fetch(`/app/users/${userId}/edit`) // Assuming an edit route that returns user data
+    fetch(`/app/users/${userId}/edit`)
       .then(response => response.json())
       .then(user => {
         $('#offcanvasAddUserLabel').text('Edit User');
         $('#addNewUserForm').attr('data-user-id', user.id);
-        $('#add-user-fullname').val(user.name);
-        $('#add-user-email').val(user.email);
-        $('#user-role').val(user.roles[0].name).trigger('change'); // Assuming single role
-        $('#user-branch').val(user.branch_id).trigger('change'); // Populate branch
-        // Populate other fields as needed
-        offcanvasAddUser.show();
+        $('#add-user-fullname').val(user.name || '');
+        $('#add-user-email').val(user.email || '');
+        const primaryRole = Array.isArray(user.roles) && user.roles.length ? user.roles[0].name : '';
+        $('#user-role').val(primaryRole).trigger('change');
+        $('#user-branch')
+          .val(user.branch_id ?? '')
+          .trigger('change');
+        const el = document.getElementById('offcanvasAddUser');
+        if (el && typeof bootstrap !== 'undefined') {
+          const instance = bootstrap.Offcanvas.getOrCreateInstance(el);
+          instance.show();
+        }
       })
       .catch(error => console.error('Error fetching user for edit:', error));
   });
@@ -725,5 +739,41 @@ document.addEventListener('DOMContentLoaded', function (e) {
         })
         .catch(error => console.error('Error deleting user:', error));
     }
+  });
+
+  $(document).on('click', '.suspend-record', function () {
+    const userId = $(this).data('id');
+    fetch(`/app/users/${userId}/suspend`, {
+      method: 'PUT',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      }
+    })
+      .then(response => response.json())
+      .then(result => {
+        if (result.message) {
+          alert(result.message);
+          dt_user.ajax.reload();
+        }
+      })
+      .catch(error => console.error('Error suspending user:', error));
+  });
+
+  $(document).on('click', '.activate-record', function () {
+    const userId = $(this).data('id');
+    fetch(`/app/users/${userId}/activate`, {
+      method: 'PUT',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      }
+    })
+      .then(response => response.json())
+      .then(result => {
+        if (result.message) {
+          alert(result.message);
+          dt_user.ajax.reload();
+        }
+      })
+      .catch(error => console.error('Error activating user:', error));
   });
 });

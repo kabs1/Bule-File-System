@@ -2,68 +2,87 @@
   "menu": [
     {
       "url": "/",
-      "name": "Home",
+      "name": "Dashboard",
       "icon": "menu-icon icon-base bx bx-home-circle",
       "slug": "pages-home"
     },
     {
-      "url": "/app/branches",
-      "name": "Branches",
-      "icon": "menu-icon icon-base bx bx-building",
-      "slug": "branches"
-    },
-    {
-      "url": "/currencies",
-      "name": "Currencies",
-      "icon": "menu-icon icon-base bx bx-dollar",
-      "slug": "currencies"
-    },
-    {
-      "url": "/measure-units",
-      "name": "Measure Units",
-      "icon": "menu-icon icon-base bx bx-ruler",
-      "slug": "measure-units"
-    },
-    {
-      "url": "/users",
-      "name": "User Management",
-      "icon": "menu-icon icon-base bx bx-user",
-      "slug": "user-management"
-    },
-    {
-      "name": "Access Control",
-      "icon": "menu-icon icon-base bx bx-shield",
-      "slug": "access-control",
+      "name": "Administration",
+      "icon": "menu-icon icon-base bx bx-cog",
+      "slug": "administration",
       "submenu": [
         {
-          "url": "/roles",
-          "name": "Roles",
-          "slug": "roles"
+          "url": "/users",
+          "name": "User Management",
+          "icon": "menu-icon icon-base bx bx-user",
+          "slug": "user-management"
         },
         {
-          "url": "/permissions",
-          "name": "Permissions",
-          "slug": "permissions"
+          "name": "Access Control",
+          "icon": "menu-icon icon-base bx bx-shield",
+          "slug": "access-control",
+          "submenu": [
+            {
+              "url": "/roles",
+              "name": "Roles",
+              "slug": "roles"
+            },
+            {
+              "url": "/permissions",
+              "name": "Permissions",
+              "slug": "permissions"
+            }
+          ]
+        },
+        {
+          "url": "/app/branches",
+          "name": "Branches",
+          "icon": "menu-icon icon-base bx bx-building",
+          "slug": "branches"
+        },
+        {
+          "url": "/currencies",
+          "name": "Currencies",
+          "icon": "menu-icon icon-base bx bx-dollar",
+          "slug": "currencies"
+        },
+        {
+          "url": "/measure-units",
+          "name": "Measure Units",
+          "icon": "menu-icon icon-base bx bx-ruler",
+          "slug": "measure-units"
+        },
+        {
+          "url": "/activity-log",
+          "name": "Activity Log",
+          "icon": "menu-icon icon-base bx bx-list-ul",
+          "slug": "activity-log"
+        },
+        {
+          "url": "/backups",
+          "name": "Backups",
+          "icon": "menu-icon icon-base bx bx-data",
+          "slug": "backups"
+        },
+        {
+          "url": "/settings",
+          "name": "System Settings",
+          "icon": "menu-icon icon-base bx bx-cog",
+          "slug": "system-settings"
         }
       ]
     },
     {
-      "url": "/backups",
-      "name": "Backups",
-      "icon": "menu-icon icon-base bx bx-data",
-      "slug": "backups"
+      "url": "/customer-management",
+      "name": "Customer Management",
+      "icon": "menu-icon icon-base bx bx-group",
+      "slug": "customer-management"
     },
     {
-      "url": "/activity-log",
-      "name": "Activity Log",
-      "icon": "menu-icon icon-base bx bx-list-ul",
-      "slug": "activity-log"
-    },
-    {
-      "url": "/settings",
-      "name": "System Settings",
-      "icon": "menu-icon icon-base bx bx-cog",
-      "slug": "system-settings"
+      "url": "/stock-management",
+      "name": "Stock Management",
+      "icon": "menu-icon icon-base bx bx-package",
+      "slug": "stock-management"
     }
   ]
 }

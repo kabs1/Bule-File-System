@@ -3,7 +3,7 @@
 return [
   "creatorName" => "ThemeSelection",
   "creatorUrl" => "https://themeselection.com",
-  "templateName" => "sneat",
+  "templateName" => "Blue File",
   "templateSuffix" => "Sneat Bootstrap 5 HTML + Laravel Admin Template",
   "templateVersion" => "4.0.0",
   "templateFree" => false,

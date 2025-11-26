@@ -20,7 +20,7 @@ class SettingController extends Controller
             'system_name' => 'nullable|string|max:255',
             'system_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'myTheme' => 'nullable|string|in:light,dark,system',
-            'mySkins' => 'nullable|string|in:default,bordered,raspberry',
+            'mySkins' => 'nullable|string|in:default,bordered',
             'hasSemiDark' => 'nullable|boolean',
             'myRTLMode' => 'nullable|boolean',
             'contentLayout' => 'nullable|string|in:compact,wide',

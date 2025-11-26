@@ -58,9 +58,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
       },
       columns: [
         // columns according to JSON
-        { data: 'id' },
-        { data: 'id' },
-        { data: 'name' },
+        { data: 'user_id' },
+        { data: 'user_id' },
+        { data: 'first_name' },
         { data: 'email' },
         { data: 'email_verified_at' },
         { data: 'action' }
@@ -90,31 +90,40 @@ document.addEventListener('DOMContentLoaded', function (e) {
           targets: 2,
           responsivePriority: 4,
           render: function (data, type, full, meta) {
-            const { name } = full; // Destructuring to get 'name' from the 'full' object
+            const first_name = full.first_name || '';
+            const last_name = full.last_name || '';
+            const avatar = full.avatar;
+            const fullName = `${first_name} ${last_name}`.trim();
 
             // For Avatar badge
-            const stateNum = Math.floor(Math.random() * 6);
             const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
-            const state = states[stateNum];
+            // Use user_id to generate a consistent color, preventing it from changing on redraw
+            const state = states[full.user_id % states.length];
 
-            // Extract initials from the name
-            const initials = (name.match(/\b\w/g) || []).shift() + (name.match(/\b\w/g) || []).pop();
+            // Extract initials from the name, ensuring fullName is not empty
+            let initials = '';
+            if (fullName) {
+              const nameParts = fullName.match(/\b\w/g) || [];
+              if (nameParts.length > 0) {
+                initials = nameParts.shift() + (nameParts.length > 0 ? nameParts.pop() : '');
+              }
+            }
             const initialsUpper = initials.toUpperCase();
 
             // Create avatar badge using template literals
-            const avatar = `<span class="avatar-initial rounded-circle bg-label-${state}">${initialsUpper}</span>`;
+            const userAvatar = avatar ? `<img src="${avatar}" alt="Avatar" class="rounded-circle">` : `<span class="avatar-initial rounded-circle bg-label-${state}">${initialsUpper}</span>`;
 
             // Create full output for row using template literals
             const rowOutput = `
               <div class="d-flex justify-content-start align-items-center user-name">
                 <div class="avatar-wrapper">
                   <div class="avatar avatar-sm me-4">
-                    ${avatar}
+                    ${userAvatar}
                   </div>
                 </div>
                 <div class="d-flex flex-column">
                   <a href="${userView}" class="text-truncate text-heading">
-                    <span class="fw-medium">${name}</span>
+                    <span class="fw-medium">${fullName}</span>
                   </a>
                 </div>
               </div>
@@ -155,8 +164,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
           render: function (data, type, full, meta) {
             return (
               '<div class="d-flex align-items-center gap-4">' +
-              `<button class="btn btn-sm btn-icon edit-record" data-id="${full['id']}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><i class="icon-base bx bx-edit icon-22px"></i></button>` +
-              `<button class="btn btn-sm btn-icon delete-record" data-id="${full['id']}"><i class="icon-base bx bx-trash icon-22px"></i></button>` +
+              `<button class="btn btn-sm btn-icon edit-record" data-id="${full['user_id']}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><i class="icon-base bx bx-edit icon-22px"></i></button>` +
+              `<button class="btn btn-sm btn-icon delete-record" data-id="${full['user_id']}"><i class="icon-base bx bx-trash icon-22px"></i></button>` +
               '<button class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded icon-22px"></i></button>' +
               '<div class="dropdown-menu dropdown-menu-end m-0">' +
               '<a href="' +
@@ -170,6 +179,47 @@ document.addEventListener('DOMContentLoaded', function (e) {
         }
       ],
       order: [[2, 'desc']],
+      // Refactored export format function to avoid repetition
+      buttons: [
+        {
+          extend: 'collection',
+          className: 'btn btn-label-secondary dropdown-toggle',
+          text: '<i class="icon-base bx bx-export me-2 bx-sm"></i>Export',
+          buttons: [
+            { extend: 'print', text: '<i class="icon-base bx bx-printer me-2" ></i>Print' },
+            { extend: 'csv', text: '<i class="icon-base bx bx-file me-2" ></i>Csv' },
+            { extend: 'excel', text: '<i class="icon-base bx bxs-file-export me-2"></i>Excel' },
+            { extend: 'pdf', text: '<i class="icon-base bxs-file-pdf me-2"></i>Pdf' },
+            { extend: 'copy', text: '<i class="icon-base bx bx-copy me-2" ></i>Copy' }
+          ].map(btn => {
+            btn.title = 'Users';
+            btn.className = 'dropdown-item';
+            btn.exportOptions = {
+              columns: [1, 2, 3, 4], // Column 5 is email verification icon, not useful text
+              format: {
+                body: function (inner, coldex, rowdex) {
+                  if (!inner) return inner;
+                  // Use the full name from the data object for the user column
+                  if (coldex === 1) { // Corresponds to the 'User' column (index 2 in original `columns` array)
+                    const rowData = dt_user.row(rowdex).data();
+                    return `${rowData.first_name || ''} ${rowData.last_name || ''}`.trim();
+                  }
+                  return inner;
+                }
+              }
+            };
+            return btn;
+          })
+        },
+        {
+          text: '<i class="icon-base bx bx-plus icon-sm me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add New User</span>',
+          className: 'add-new btn btn-primary',
+          attr: {
+            'data-bs-toggle': 'offcanvas',
+            'data-bs-target': '#offcanvasAddUser'
+          }
+        }
+      ],
       layout: {
         topStart: {
           rowClass: 'row m-3 my-0 justify-content-between',
@@ -184,236 +234,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
         },
         topEnd: {
           features: [
-            {
-              search: {
-                placeholder: 'Search User',
-                text: '_INPUT_'
-              }
-            },
-            {
-              buttons: [
-                {
-                  extend: 'collection',
-                  className: 'btn btn-label-secondary dropdown-toggle',
-                  text: '<i class="icon-base bx bx-export me-2 bx-sm"></i>Export',
-                  buttons: [
-                    {
-                      extend: 'print',
-                      title: 'Users',
-                      text: '<i class="icon-base bx bx-printer me-2" ></i>Print',
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [1, 2, 3, 4, 5],
-                        // prevent avatar to be print
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-
-                            // Check if inner is HTML content
-                            if (inner.indexOf('<') > -1) {
-                              const parser = new DOMParser();
-                              const doc = parser.parseFromString(inner, 'text/html');
-
-                              // Get all text content
-                              let text = '';
-
-                              // Handle specific elements
-                              const userNameElements = doc.querySelectorAll('.user-name');
-                              if (userNameElements.length > 0) {
-                                userNameElements.forEach(el => {
-                                  // Get text from nested structure
-                                  const nameText =
-                                    el.querySelector('.fw-medium')?.textContent ||
-                                    el.querySelector('.d-block')?.textContent ||
-                                    el.textContent;
-                                  text += nameText.trim() + ' ';
-                                });
-                              } else {
-                                // Get regular text content
-                                text = doc.body.textContent || doc.body.innerText;
-                              }
-
-                              return text.trim();
-                            }
-
-                            return inner;
-                          }
-                        }
-                      },
-                      customize: function (win) {
-                        win.document.body.style.color = config.colors.headingColor;
-                        win.document.body.style.borderColor = config.colors.borderColor;
-                        win.document.body.style.backgroundColor = config.colors.bodyBg;
-                        const table = win.document.body.querySelector('table');
-                        table.classList.add('compact');
-                        table.style.color = 'inherit';
-                        table.style.borderColor = 'inherit';
-                        table.style.backgroundColor = 'inherit';
-                      }
-                    },
-                    {
-                      extend: 'csv',
-                      title: 'Users',
-                      text: '<i class="icon-base bx bx-file me-2" ></i>Csv',
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [1, 2, 3, 4, 5],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-
-                            // Parse HTML content
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(inner, 'text/html');
-
-                            let text = '';
-
-                            // Handle user-name elements specifically
-                            const userNameElements = doc.querySelectorAll('.user-name');
-                            if (userNameElements.length > 0) {
-                              userNameElements.forEach(el => {
-                                // Get text from nested structure - try different selectors
-                                const nameText =
-                                  el.querySelector('.fw-medium')?.textContent ||
-                                  el.querySelector('.d-block')?.textContent ||
-                                  el.textContent;
-                                text += nameText.trim() + ' ';
-                              });
-                            } else {
-                              // Handle other elements (status, role, etc)
-                              text = doc.body.textContent || doc.body.innerText;
-                            }
-
-                            return text.trim();
-                          }
-                        }
-                      }
-                    },
-                    {
-                      extend: 'excel',
-                      text: '<i class="icon-base bx bxs-file-export me-2"></i>Excel',
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [1, 2, 3, 4, 5],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-
-                            // Parse HTML content
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(inner, 'text/html');
-
-                            let text = '';
-
-                            // Handle user-name elements specifically
-                            const userNameElements = doc.querySelectorAll('.user-name');
-                            if (userNameElements.length > 0) {
-                              userNameElements.forEach(el => {
-                                // Get text from nested structure - try different selectors
-                                const nameText =
-                                  el.querySelector('.fw-medium')?.textContent ||
-                                  el.querySelector('.d-block')?.textContent ||
-                                  el.textContent;
-                                text += nameText.trim() + ' ';
-                              });
-                            } else {
-                              // Handle other elements (status, role, etc)
-                              text = doc.body.textContent || doc.body.innerText;
-                            }
-
-                            return text.trim();
-                          }
-                        }
-                      }
-                    },
-                    {
-                      extend: 'pdf',
-                      title: 'Users',
-                      text: '<i class="icon-base bx bxs-file-pdf me-2"></i>Pdf',
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [1, 2, 3, 4, 5],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-
-                            // Parse HTML content
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(inner, 'text/html');
-
-                            let text = '';
-
-                            // Handle user-name elements specifically
-                            const userNameElements = doc.querySelectorAll('.user-name');
-                            if (userNameElements.length > 0) {
-                              userNameElements.forEach(el => {
-                                // Get text from nested structure - try different selectors
-                                const nameText =
-                                  el.querySelector('.fw-medium')?.textContent ||
-                                  el.querySelector('.d-block')?.textContent ||
-                                  el.textContent;
-                                text += nameText.trim() + ' ';
-                              });
-                            } else {
-                              // Handle other elements (status, role, etc)
-                              text = doc.body.textContent || doc.body.innerText;
-                            }
-
-                            return text.trim();
-                          }
-                        }
-                      }
-                    },
-                    {
-                      extend: 'copy',
-                      title: 'Users',
-                      text: '<i class="icon-base bx bx-copy me-2" ></i>Copy',
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [1, 2, 3, 4, 5],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-
-                            // Parse HTML content
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(inner, 'text/html');
-
-                            let text = '';
-
-                            // Handle user-name elements specifically
-                            const userNameElements = doc.querySelectorAll('.user-name');
-                            if (userNameElements.length > 0) {
-                              userNameElements.forEach(el => {
-                                // Get text from nested structure - try different selectors
-                                const nameText =
-                                  el.querySelector('.fw-medium')?.textContent ||
-                                  el.querySelector('.d-block')?.textContent ||
-                                  el.textContent;
-                                text += nameText.trim() + ' ';
-                              });
-                            } else {
-                              // Handle other elements (status, role, etc)
-                              text = doc.body.textContent || doc.body.innerText;
-                            }
-
-                            return text.trim();
-                          }
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  text: '<i class="icon-base bx bx-plus icon-sm me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add New User</span>',
-                  className: 'add-new btn btn-primary',
-                  attr: {
-                    'data-bs-toggle': 'offcanvas',
-                    'data-bs-target': '#offcanvasAddUser'
-                  }
-                }
-              ]
-            }
+            'search',
+            'buttons'
           ]
         },
         bottomStart: {
@@ -443,17 +265,31 @@ document.addEventListener('DOMContentLoaded', function (e) {
           display: DataTable.Responsive.display.modal({
             header: function (row) {
               const data = row.data();
-              return 'Details of ' + data['name'];
+              return 'Details of ' + data['first_name'] + ' ' + data['last_name'];
             }
           }),
           type: 'column',
           renderer: function (api, rowIdx, columns) {
             const data = columns
               .map(function (col) {
+                // Check if the column title is 'User ID' or 'ID' and use the correct data field
+                let displayData = col.data;
+                if (col.title === 'User ID' || col.title === 'ID') {
+                  displayData = col.data.user_id || col.data.id; // Assuming 'user_id' or 'id' is the correct field
+                } else if (col.title === 'First Name') {
+                  displayData = col.data.first_name;
+                } else if (col.title === 'Email') {
+                  displayData = col.data.email;
+                } else if (col.title === 'Email Verified At') {
+                  displayData = col.data.email_verified_at;
+                } else if (col.title === 'Actions') {
+                  displayData = ''; // Actions are buttons, not plain text
+                }
+
                 return col.title !== '' // Do not show row in modal popup if title is blank (for check box)
                   ? `<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
                       <td>${col.title}:</td>
-                      <td>${col.data}</td>
+                      <td>${displayData}</td>
                     </tr>`
                   : '';
               })
@@ -551,32 +387,40 @@ document.addEventListener('DOMContentLoaded', function (e) {
       }
     });
 
-    // edit record
-    document.addEventListener('click', function (e) {
-      if (e.target.closest('.edit-record')) {
-        const editBtn = e.target.closest('.edit-record');
-        const user_id = editBtn.dataset.id;
-        const dtrModal = document.querySelector('.dtr-bs-modal.show');
+        // edit record
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.edit-record')) {
+                const editBtn = e.target.closest('.edit-record');
+                const user_id = editBtn.dataset.id;
+                const dtrModal = document.querySelector('.dtr-bs-modal.show');
 
-        // hide responsive modal in small screen
-        if (dtrModal) {
-          const bsModal = bootstrap.Modal.getInstance(dtrModal);
-          bsModal.hide();
-        }
+                // hide responsive modal in small screen
+                if (dtrModal) {
+                    const bsModal = bootstrap.Modal.getInstance(dtrModal);
+                    bsModal.hide();
+                }
 
-        // changing the title of offcanvas
-        document.getElementById('offcanvasAddUserLabel').innerHTML = 'Edit User';
+                // changing the title of offcanvas
+                document.getElementById('offcanvasAddUserLabel').innerHTML = 'Edit User';
 
-        // get data
-        fetch(`${baseUrl}user-list/${user_id}/edit`)
-          .then(response => response.json())
-          .then(data => {
-            document.getElementById('user_id').value = data.id;
-            document.getElementById('add-user-fullname').value = data.name;
-            document.getElementById('add-user-email').value = data.email;
-          });
-      }
-    });
+                // get data
+                fetch(`${baseUrl}user-list/${user_id}/edit`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('user_id').value = data.user_id;
+                        document.getElementById('add-user-first-name').value = data.first_name;
+                        document.getElementById('add-user-last-name').value = data.last_name;
+                        document.getElementById('add-user-email').value = data.email;
+                        document.getElementById('add-user-contact').value = data.contact;
+                        document.getElementById('add-user-username').value = data.username;
+                        document.getElementById('add-user-user-type').value = data.user_type;
+                        document.getElementById('add-user-role').value = data.role_id;
+                        document.getElementById('add-user-status').value = data.status;
+                        document.getElementById('add-user-branch').value = data.branch_id;
+                        // Handle profile_picture and all_branch_access if needed
+                    });
+            }
+        });
 
     // changing the title
     const addNewBtn = document.querySelector('.add-new');
@@ -587,36 +431,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
       });
     }
 
-    // Filter form control to default size
-    setTimeout(() => {
-      const elementsToModify = [
-        { selector: '.dt-buttons .btn', classToRemove: 'btn-secondary' },
-        { selector: '.dt-search .form-control', classToRemove: 'form-control-sm' },
-        { selector: '.dt-length .form-select', classToRemove: 'form-select-sm', classToAdd: 'ms-0' },
-        { selector: '.dt-length', classToAdd: 'mb-md-6 mb-0' },
-        {
-          selector: '.dt-layout-end',
-          classToRemove: 'justify-content-between',
-          classToAdd: 'd-flex gap-md-4 justify-content-md-between justify-content-center gap-0 flex-wrap mt-0'
-        },
-        { selector: '.dt-layout-start', classToAdd: 'mt-0' },
-        { selector: '.dt-buttons', classToAdd: 'd-flex gap-4 mb-md-0 mb-6' },
-        { selector: '.dt-layout-table', classToRemove: 'row mt-2' },
-        { selector: '.dt-layout-full', classToRemove: 'col-md col-12', classToAdd: 'table-responsive' }
-      ];
-
-      // Delete record
-      elementsToModify.forEach(({ selector, classToRemove, classToAdd }) => {
-        document.querySelectorAll(selector).forEach(element => {
-          if (classToRemove) {
-            classToRemove.split(' ').forEach(className => element.classList.remove(className));
-          }
-          if (classToAdd) {
-            classToAdd.split(' ').forEach(className => element.classList.add(className));
-          }
-        });
-      });
-    }, 100);
   }
 
   // validating form and updating user's data
@@ -626,14 +440,21 @@ document.addEventListener('DOMContentLoaded', function (e) {
   if (addNewUserForm) {
     const fv = FormValidation.formValidation(addNewUserForm, {
       fields: {
-        name: {
+        'first_name': {
           validators: {
             notEmpty: {
-              message: 'Please enter fullname'
+              message: 'Please enter first name'
             }
           }
         },
-        email: {
+        'last_name': {
+          validators: {
+            notEmpty: {
+              message: 'Please enter last name'
+            }
+          }
+        },
+        'email': {
           validators: {
             notEmpty: {
               message: 'Please enter your email'
@@ -643,17 +464,45 @@ document.addEventListener('DOMContentLoaded', function (e) {
             }
           }
         },
-        userContact: {
+        'contact': {
           validators: {
             notEmpty: {
               message: 'Please enter your contact'
             }
           }
         },
-        company: {
+        'username': {
           validators: {
             notEmpty: {
-              message: 'Please enter your company'
+              message: 'Please enter username'
+            }
+          }
+        },
+        'password': {
+          validators: {
+            notEmpty: {
+              message: 'Please enter password'
+            }
+          }
+        },
+        'role_id': {
+          validators: {
+            notEmpty: {
+              message: 'Please select a role'
+            }
+          }
+        },
+        'status': {
+          validators: {
+            notEmpty: {
+              message: 'Please select a status'
+            }
+          }
+        },
+        'branch_id': {
+          validators: {
+            notEmpty: {
+              message: 'Please select a branch'
             }
           }
         }
@@ -681,28 +530,26 @@ document.addEventListener('DOMContentLoaded', function (e) {
         formDataObj[key] = value;
       });
 
-      const searchParams = new URLSearchParams();
-      for (const [key, value] of Object.entries(formDataObj)) {
-        searchParams.append(key, value);
-      }
+      const url = formDataObj.user_id ? `${baseUrl}user-list/${formDataObj.user_id}` : `${baseUrl}user-list`;
+      const method = formDataObj.user_id ? 'PUT' : 'POST';
 
-      fetch(`${baseUrl}user-list`, {
-        method: 'POST',
+      fetch(url, {
+        method: method,
         headers: {
           'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
           'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: searchParams.toString()
+        body: new URLSearchParams(formDataObj).toString()
       })
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
-          return response.text();
+          return response.json();
         })
-        .then(status => {
+        .then(data => {
           // Refresh DataTable
-          dt_user_table && new DataTable(dt_user_table).draw();
+          dt_user && dt_user.draw();
 
           // Hide offcanvas
           const offcanvasInstance = bootstrap.Offcanvas.getInstance(offCanvasForm);
@@ -711,8 +558,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
           // sweetalert
           Swal.fire({
             icon: 'success',
-            title: `Successfully ${status}!`,
-            text: `User ${status} Successfully.`,
+            title: `Successfully ${data.message}!`,
+            text: `User ${data.message} Successfully.`,
             customClass: {
               confirmButton: 'btn btn-success'
             }
@@ -724,8 +571,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
           offcanvasInstance && offcanvasInstance.hide();
 
           Swal.fire({
-            title: 'Duplicate Entry!',
-            text: 'Your email should be unique.',
+            title: 'Error!',
+            text: err.message,
             icon: 'error',
             customClass: {
               confirmButton: 'btn btn-success'

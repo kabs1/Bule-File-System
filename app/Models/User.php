@@ -32,10 +32,20 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected $primaryKey = 'user_id';
+
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
+        'contact',
+        'user_type',
+        'username',
         'password',
+        'profile_picture',
+        'all_branch_access',
+        'role_id',
+        'status',
         'created_by_user_id',
         'branch_id',
     ];
@@ -95,6 +105,10 @@ class User extends Authenticatable
         return LogOptions::defaults()
             ->logFillable()
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
+            ->dontSubmitEmptyLogs()
+            ->logOnly(['first_name', 'last_name', 'email', 'contact', 'user_type', 'username', 'profile_picture', 'all_branch_access', 'role_id', 'status', 'created_by_user_id', 'branch_id'])
+            ->setDescriptionForEvent(function (string $eventName) {
+                return "User {$this->username} has been {$eventName}";
+            });
     }
 }

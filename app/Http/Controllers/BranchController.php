@@ -15,7 +15,14 @@ class BranchController extends Controller
     {
         $branches = Branch::all();
         if ($request->ajax()) {
-            return response()->json(['data' => $branches]);
+            $data = $branches->map(function ($b) {
+                return [
+                    'id' => $b->branch_id,
+                    'name' => $b->branch_name,
+                    'location' => $b->description,
+                ];
+            });
+            return response()->json(['data' => $data]);
         }
         return view('content.pages.branches', compact('branches'));
     }
@@ -34,11 +41,16 @@ class BranchController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:branches,name',
+            'name' => 'required|string|max:255|unique:branches,branch_name',
             'location' => 'nullable|string|max:255',
         ]);
 
-        Branch::create($request->all());
+        Branch::create([
+            'branch_name' => $request->name,
+            'description' => $request->location,
+            'user_id' => auth()->id(),
+            'status' => 2,
+        ]);
 
         return response()->json(['message' => 'Branch created successfully.']);
     }
@@ -48,7 +60,11 @@ class BranchController extends Controller
      */
     public function show(Branch $branch)
     {
-        return response()->json($branch);
+        return response()->json([
+            'id' => $branch->branch_id,
+            'name' => $branch->branch_name,
+            'location' => $branch->description,
+        ]);
     }
 
     /**
@@ -56,7 +72,11 @@ class BranchController extends Controller
      */
     public function edit(Branch $branch)
     {
-        return response()->json($branch);
+        return response()->json([
+            'id' => $branch->branch_id,
+            'name' => $branch->branch_name,
+            'location' => $branch->description,
+        ]);
     }
 
     /**
@@ -65,11 +85,16 @@ class BranchController extends Controller
     public function update(Request $request, Branch $branch)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255', Rule::unique('branches', 'name')->ignore($branch->id)],
+            'name' => ['required', 'string', 'max:255', Rule::unique('branches', 'branch_name')->ignore($branch->branch_id, 'branch_id')],
             'location' => 'nullable|string|max:255',
         ]);
 
-        $branch->update($request->all());
+        $branch->update([
+            'branch_name' => $request->name,
+            'description' => $request->location,
+            'user_id' => auth()->id(),
+            'status' => $branch->status ?? 2,
+        ]);
 
         return response()->json(['message' => 'Branch updated successfully.']);
     }
