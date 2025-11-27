@@ -263,17 +263,49 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }, 100);
 
-  var addBranchForm = document.getElementById('addBranchForm');
+  const addBranchForm = document.getElementById('addBranchForm');
 
-  // Add/Edit Branch Form Validation and Submission
-  addBranchForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const nameVal = document.getElementById('modalBranchName').value;
-    const descVal = document.getElementById('modalBranchLocation').value;
-    const data = { name: nameVal, location: descVal };
-    const branchId = addBranchForm.dataset.branchId;
+  // Add/Edit Branch Form Validation
+  const fv = FormValidation.formValidation(addBranchForm, {
+    fields: {
+      branchName: {
+        validators: {
+          notEmpty: {
+            message: 'Please enter branch name'
+          }
+        }
+      },
+      branchLocation: {
+        validators: {
+          notEmpty: {
+            message: 'Please enter branch location'
+          }
+        }
+      }
+    },
+    plugins: {
+      trigger: new FormValidation.plugins.Trigger(),
+      bootstrap5: new FormValidation.plugins.Bootstrap5({
+        eleValidClass: '',
+        rowSelector: function (field, ele) {
+          return '.form-control-validation';
+        }
+      }),
+      submitButton: new FormValidation.plugins.SubmitButton(),
+      autoFocus: new FormValidation.plugins.AutoFocus()
+    }
+  }).on('core.form.valid', function () {
+    // When the form is submitted and all fields are valid
+    const form = addBranchForm;
+    const formData = new FormData(form);
+    const data = {
+      name: document.getElementById('modalBranchName').value,
+      location: document.getElementById('modalBranchLocation').value
+    };
+    const branchId = form.dataset.branchId;
     const method = branchId ? 'PUT' : 'POST';
     const url = branchId ? `/app/branches/${branchId}` : '/app/branches';
+
     fetch(url, {
       method,
       headers: {
@@ -301,46 +333,61 @@ document.addEventListener('DOMContentLoaded', function () {
           }
           addBranchForm.reset();
           addBranchForm.removeAttribute('data-branch-id');
-          toastr.success(res.message, 'Success!', {
-            closeButton: true,
-            tapToDismiss: false,
-            rtl: isRtl
-          });
-        } else if (res.errors) {
-          for (const [key, value] of Object.entries(res.errors)) {
-            toastr.error(value, 'Error!', {
+          fv.resetForm(true); // Reset form validation
+          if (window.toastr) {
+            toastr.success(res.message, 'Success!', {
               closeButton: true,
               tapToDismiss: false,
               rtl: isRtl
             });
+          } else {
+            alert('Success: ' + res.message);
           }
-        }
-      })
-      .catch(async err => {
-        console.error('Branch save failed:', err);
-        try {
-          const errorResponse = JSON.parse(err.message);
-          if (errorResponse.errors) {
-            for (const [key, value] of Object.entries(errorResponse.errors)) {
+        } else if (res.errors) {
+          for (const [key, value] of Object.entries(res.errors)) {
+            if (window.toastr) {
               toastr.error(value, 'Error!', {
                 closeButton: true,
                 tapToDismiss: false,
                 rtl: isRtl
               });
+            } else {
+              alert('Error: ' + value);
             }
-          } else {
-            toastr.error('Failed to save branch. Please check inputs and try again.', 'Error!', {
+          }
+        }
+      })
+      .catch(async err => {
+        console.error('Branch save failed:', err);
+        let errorResponse = null;
+        try {
+          errorResponse = JSON.parse(err.message);
+        } catch (e) {
+          // If parsing fails, it's not a JSON error response, so we'll treat it as a generic error
+        }
+
+        if (errorResponse && typeof errorResponse === 'object' && errorResponse.errors) {
+          for (const [key, value] of Object.entries(errorResponse.errors)) {
+            if (window.toastr) {
+              toastr.error(value, 'Error!', {
+                closeButton: true,
+                tapToDismiss: false,
+                rtl: isRtl
+              });
+            } else {
+              alert('Error: ' + value);
+            }
+          }
+        } else {
+          if (window.toastr) {
+            toastr.error('An unexpected error occurred. Please try again.', 'Error!', {
               closeButton: true,
               tapToDismiss: false,
               rtl: isRtl
             });
+          } else {
+            alert('Error: An unexpected error occurred. Please try again.');
           }
-        } catch (e) {
-          toastr.error('An unexpected error occurred. Please try again.', 'Error!', {
-            closeButton: true,
-            tapToDismiss: false,
-            rtl: isRtl
-          });
         }
       });
   });

@@ -70,7 +70,6 @@ export default defineConfig({
       ],
       refresh: true
     }),
-    html(),
     libsWindowAssignment(),
     iconsPlugin()
   ],

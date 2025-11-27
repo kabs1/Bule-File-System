@@ -15,11 +15,16 @@
 @endsection
 
 @section('page-script')
-  @vite(['resources/assets/js/app-access-roles.js'])
+  @vite(['resources/assets/js/app-access-roles.js', 'resources/assets/js/modal-add-role.js'])
 @endsection
 
 @section('content')
   <h4 class="mb-1">Roles List</h4>
+  <script>
+    window.canCreateRole = @json(auth()->check() ? auth()->user()->can('create role') : false);
+    window.canUpdateRole = @json(auth()->check() ? auth()->user()->can('update role') : false);
+    window.canDeleteRole = @json(auth()->check() ? auth()->user()->can('delete role') : false);
+  </script>
 
   <p class="mb-6">A role provided access to predefined menus and features so that depending on assigned role an
     administrator can have access to what user needs.</p>
@@ -38,8 +43,10 @@
             <div class="d-flex justify-content-between align-items-end">
               <div class="role-heading">
                 <h5 class="mb-1">{{ $role->name }}</h5>
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal"
-                  class="role-edit-modal"><span>Edit Role</span></a>
+                @can('update role')
+                  <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal"
+                    class="role-edit-modal"><span>Edit Role</span></a>
+                @endcan
               </div>
               <a href="javascript:void(0);"><i class="icon-base bx bx-copy icon-md text-body-secondary"></i></a>
             </div>
@@ -60,8 +67,10 @@
           </div>
           <div class="col-sm-7">
             <div class="card-body text-sm-end text-center ps-sm-0">
-              <button data-bs-target="#addRoleModal" data-bs-toggle="modal"
-                class="btn btn-sm btn-primary mb-4 text-nowrap add-new-role">Add New Role</button>
+              @can('create role')
+                <button data-bs-target="#addRoleModal" data-bs-toggle="modal"
+                  class="btn btn-sm btn-primary mb-4 text-nowrap add-new-role">Add New Role</button>
+              @endcan
               <p class="mb-0">
                 Add new role, <br />
                 if it doesn't exist.
@@ -84,11 +93,9 @@
               <tr>
                 <th></th>
                 <th></th>
-                <th>User</th>
                 <th>Role</th>
-                <th>Plan</th>
-                <th>Billing</th>
-                <th>Status</th>
+                <th>Guard</th>
+                <th>Users</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -101,6 +108,8 @@
   <!--/ Role cards -->
 
   <!-- Add Role Modal -->
-  @include('_partials/_modals/modal-add-role')
+  @can('create role')
+    @include('_partials/_modals/modal-add-role')
+  @endcan
   <!-- / Add Role Modal -->
 @endsection

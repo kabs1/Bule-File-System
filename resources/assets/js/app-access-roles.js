@@ -12,7 +12,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
   // Roles List datatable
   if (dtRoleTable) {
     dt_Role = new DataTable(dtRoleTable, {
-      ajax: '/app/roles/list', // AJAX route to fetch role data
+      ajax: {
+        url: '/app/roles/list',
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+      },
       columns: [
         // columns according to JSON
         { data: '' }, // For responsive control
@@ -72,13 +75,25 @@ document.addEventListener('DOMContentLoaded', function (e) {
           searchable: false,
           orderable: false,
           render: function (data, type, full, meta) {
+            const actions = [];
+            if (window.canDeleteRole) {
+              actions.push(
+                `<a href=\"javascript:;\" data-id=\"${full['id']}\" class=\"btn btn-icon delete-record\"><i class=\"icon-base bx bx-trash icon-md\"></i></a>`
+              );
+            }
+            actions.push(
+              `<a href=\"javascript:;\" class=\"btn btn-icon dropdown-toggle hide-arrow\" data-bs-toggle=\"dropdown\"><i class=\"icon-base bx bx-dots-vertical-rounded icon-md\"></i></a>`
+            );
+            const dropdownItems = [];
+            if (window.canUpdateRole) {
+              dropdownItems.push('<a href="javascript:;" class="dropdown-item">Edit</a>');
+            }
+            dropdownItems.push('<a href="javascript:;" class="dropdown-item">Suspend</a>');
             return `
               <div class="d-flex align-items-center">
-                <a href="javascript:;" class="btn btn-icon delete-record"><i class="icon-base bx bx-trash icon-md"></i></a>
-                <a href="javascript:;" class="btn btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded icon-md"></i></a>
+                ${actions.join('')}
                 <div class="dropdown-menu dropdown-menu-end m-0">
-                  <a href="javascript:;" class="dropdown-item">Edit</a>
-                  <a href="javascript:;" class="dropdown-item">Suspend</a>
+                  ${dropdownItems.join('')}
                 </div>
               </div>
             `;
@@ -111,19 +126,21 @@ document.addEventListener('DOMContentLoaded', function (e) {
               }
             },
             {
-              buttons: [
-                {
-                  text: '<i class="icon-base bx bx-plus icon-sm me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add New Role</span>',
-                  className: 'add-new btn btn-primary',
-                  action: function () {
-                    const el = document.getElementById('addRoleModal');
-                    if (el && typeof bootstrap !== 'undefined') {
-                      const instance = bootstrap.Modal.getOrCreateInstance(el);
-                      instance.show();
+              buttons: window.canCreateRole
+                ? [
+                    {
+                      text: '<i class="icon-base bx bx-plus icon-sm me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add New Role</span>',
+                      className: 'add-new btn btn-primary',
+                      action: function () {
+                        const el = document.getElementById('addRoleModal');
+                        if (el && typeof bootstrap !== 'undefined') {
+                          const instance = bootstrap.Modal.getOrCreateInstance(el);
+                          instance.show();
+                        }
+                      }
                     }
-                  }
-                }
-              ]
+                  ]
+                : []
             }
           ]
         },
@@ -183,6 +200,16 @@ document.addEventListener('DOMContentLoaded', function (e) {
       }
     });
 
+    window.dt_Role = dt_Role;
+
+    document.addEventListener('roles:reload', function () {
+      try {
+        dt_Role.ajax.reload();
+      } catch (e) {
+        console.error('Failed to reload roles datatable:', e);
+      }
+    });
+
     //? The 'delete-record' class is necessary for the functionality of the following code.
     function deleteRecord(event) {
       let row = document.querySelector('.dtr-expanded');
@@ -219,6 +246,27 @@ document.addEventListener('DOMContentLoaded', function (e) {
         }
       }
     }
+
+    $(document).on('click', '.delete-record', function () {
+      const roleId = $(this).data('id');
+      if (!roleId) return;
+      if (confirm('Are you sure you want to delete this role?')) {
+        fetch(`/app/roles/${roleId}`, {
+          method: 'DELETE',
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
+        })
+          .then(response => response.json())
+          .then(result => {
+            if (result.message) {
+              alert(result.message);
+              dt_Role.ajax.reload();
+            }
+          })
+          .catch(error => console.error('Error deleting role:', error));
+      }
+    });
 
     // Initial event binding
     bindDeleteEvent();

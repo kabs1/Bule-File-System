@@ -27,32 +27,41 @@ Route::get('/pages/misc-error', [MiscError::class, 'index'])->name('pages-misc-e
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::get('/dashboard', [Page2::class, 'index'])->name('dashboard');
 
-    Route::get('/roles', [RoleController::class, 'index'])->name('roles');
-    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions');
+    Route::get('/roles', [RoleController::class, 'index'])->middleware('can:view role')->name('roles');
+    Route::get('/permissions', [PermissionController::class, 'index'])->middleware('can:view permission')->name('permissions');
     Route::get('/users', [UserController::class, 'index'])->name('users');
 
     // User Management Routes
     Route::get('/app/users/list', [UserController::class, 'list'])->name('users.list');
     Route::post('/app/users', [UserController::class, 'store'])->name('users.store');
+    Route::get('/app/users/{user}', [UserController::class, 'show'])->name('users.show'); // Added route for fetching single user
     Route::put('/app/users/{user}', [UserController::class, 'update'])->name('users.update');
-    Route::get('/app/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::get('/app/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit'); // This route is not currently used by JS for fetching, but kept for consistency
     Route::delete('/app/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::put('/app/users/{user}/suspend', [UserController::class, 'suspend'])->name('users.suspend');
     Route::put('/app/users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
 
+    // Customer Management Routes
+    Route::group(['prefix' => 'app'], function () {
+        Route::get('customers/list', [App\Http\Controllers\CustomerController::class, 'list'])->name('customers.list');
+        Route::resource('customers', App\Http\Controllers\CustomerController::class);
+        Route::put('customers/{customer}/suspend', [App\Http\Controllers\CustomerController::class, 'suspend'])->name('customers.suspend');
+        Route::put('customers/{customer}/activate', [App\Http\Controllers\CustomerController::class, 'activate'])->name('customers.activate');
+    });
+
     // Role Management Routes
     Route::get('/app/roles/list', [RoleController::class, 'list'])->name('roles.list');
-    Route::post('/app/roles', [RoleController::class, 'store'])->name('roles.store');
+    Route::post('/app/roles', [RoleController::class, 'store'])->middleware('can:create role')->name('roles.store');
     Route::get('/app/roles/{role}', [RoleController::class, 'show'])->name('roles.show');
-    Route::put('/app/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
-    Route::delete('/app/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    Route::put('/app/roles/{role}', [RoleController::class, 'update'])->middleware('can:update role')->name('roles.update');
+    Route::delete('/app/roles/{role}', [RoleController::class, 'destroy'])->middleware('can:delete role')->name('roles.destroy');
 
     // Permission Management Routes
     Route::get('/app/permissions/list', [PermissionController::class, 'list'])->name('permissions.list');
-    Route::post('/app/permissions', [PermissionController::class, 'store'])->name('permissions.store');
+    Route::post('/app/permissions', [PermissionController::class, 'store'])->middleware('can:create permission')->name('permissions.store');
     Route::get('/app/permissions/{permission}', [PermissionController::class, 'show'])->name('permissions.show');
-    Route::put('/app/permissions/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
-    Route::delete('/app/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+    Route::put('/app/permissions/{permission}', [PermissionController::class, 'update'])->middleware('can:update permission')->name('permissions.update');
+    Route::delete('/app/permissions/{permission}', [PermissionController::class, 'destroy'])->middleware('can:delete permission')->name('permissions.destroy');
 
     // Branch Management Routes
     Route::get('/app/branches', [BranchController::class, 'index'])->name('branches.index');
@@ -72,6 +81,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // Measure Unit Management Routes
     Route::resource('measure-units', App\Http\Controllers\MeasureUnitController::class);
     Route::get('/app/measure-units/list', [App\Http\Controllers\MeasureUnitController::class, 'list'])->name('measure-units.list');
+
+    // Customer Management Routes (already moved above)
+    // Route::resource('customers', App\Http\Controllers\CustomerController::class);
+    // Route::get('/app/customers/list', [App\Http\Controllers\CustomerController::class, 'list'])->name('customers.list');
 
     // Backup Management Routes
     Route::group(['prefix' => 'backups', 'as' => 'backups.'], function () {

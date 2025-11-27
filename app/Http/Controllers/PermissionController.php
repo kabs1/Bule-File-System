@@ -16,6 +16,9 @@ class PermissionController extends Controller
 
     public function list(Request $request)
     {
+        if (!auth()->user()->can('view permission')) {
+            abort(403);
+        }
         $permissions = Permission::all();
         $data = [];
         foreach ($permissions as $permission) {
@@ -31,6 +34,9 @@ class PermissionController extends Controller
 
     public function store(Request $request)
     {
+        if (!auth()->user()->can('create permission')) {
+            abort(403);
+        }
         $request->validate([
             'permissionName' => 'required|string|max:255|unique:permissions,name',
         ]);
@@ -42,11 +48,17 @@ class PermissionController extends Controller
 
     public function show(Permission $permission)
     {
+        if (!auth()->user()->can('view permission')) {
+            abort(403);
+        }
         return response()->json($permission);
     }
 
     public function update(Request $request, Permission $permission)
     {
+        if (!auth()->user()->can('update permission')) {
+            abort(403);
+        }
         $request->validate([
             'permissionName' => ['required', 'string', 'max:255', Rule::unique('permissions', 'name')->ignore($permission->id)],
         ]);
@@ -58,6 +70,9 @@ class PermissionController extends Controller
 
     public function destroy(Permission $permission)
     {
+        if (!auth()->user()->can('delete permission')) {
+            abort(403);
+        }
         $permission->delete();
         return response()->json(['message' => 'Permission deleted successfully.']);
     }

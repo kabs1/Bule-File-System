@@ -3,11 +3,11 @@
 @section('title', 'Currencies')
 
 @section('vendor-style')
-  @vite(['resources/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.scss', 'resources/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.scss', 'resources/assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.scss'])
+  @vite(['resources/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.scss', 'resources/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.scss', 'resources/assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.scss', 'resources/assets/vendor/libs/@form-validation/form-validation.scss'])
 @endsection
 
 @section('vendor-script')
-  @vite(['resources/assets/vendor/libs/moment/moment.js', 'resources/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js'])
+  @vite(['resources/assets/vendor/libs/moment/moment.js', 'resources/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js', 'resources/assets/vendor/libs/@form-validation/popular.js', 'resources/assets/vendor/libs/@form-validation/bootstrap5.js', 'resources/assets/vendor/libs/@form-validation/auto-focus.js'])
 @endsection
 
 @section('page-script')
@@ -49,15 +49,15 @@
         <form id="addCurrencyForm">
           <div class="mb-6 form-control-validation">
             <label class="form-label" for="currency-name">Name</label>
-            <input type="text" class="form-control" id="currency-name" name="name" />
+            <input type="text" class="form-control" id="currency-name" name="currencyName" />
           </div>
           <div class="mb-6 form-control-validation">
             <label class="form-label" for="currency-code">Code</label>
-            <input type="text" class="form-control" id="currency-code" name="code" maxlength="3" />
+            <input type="text" class="form-control" id="currency-code" name="currencyCode" maxlength="3" />
           </div>
           <div class="mb-6 form-control-validation">
             <label class="form-label" for="currency-symbol">Symbol</label>
-            <input type="text" class="form-control" id="currency-symbol" name="symbol" maxlength="5" />
+            <input type="text" class="form-control" id="currency-symbol" name="currencySymbol" maxlength="5" />
           </div>
 
           <!-- <div class="mb-6 form-check">

@@ -15,7 +15,7 @@
 @endsection
 
 @section('content')
-  <div class="row g-6 mb-6">
+<div class="row g-6 mb-6">
     <div class="col-sm-6 col-xl-3">
       <div class="card">
         <div class="card-body">
@@ -38,27 +38,27 @@
       </div>
     </div>
     @foreach ($roleCounts as $roleName => $userCount)
-      <div class="col-sm-6 col-xl-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex align-items-start justify-content-between">
-              <div class="content-left">
-                <span class="text-heading">{{ $roleName }} Users</span>
-                <div class="d-flex align-items-center my-1">
-                  <h4 class="mb-0 me-2">{{ $userCount }}</h4>
-                  <p class="text-success mb-0">(+XX%)</p> {{-- Percentage is still hardcoded, can be improved later --}}
-                </div>
-                <small class="mb-0">Total {{ $roleName }} Users</small>
+    <div class="col-sm-6 col-xl-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-start justify-content-between">
+            <div class="content-left">
+              <span class="text-heading">{{ $roleName }} Users</span>
+              <div class="d-flex align-items-center my-1">
+                <h4 class="mb-0 me-2">{{ $userCount }}</h4>
+                <p class="text-success mb-0">(+XX%)</p> {{-- Percentage is still hardcoded, can be improved later --}}
               </div>
-              <div class="avatar">
-                <span class="avatar-initial rounded bg-label-info">
-                  <i class="icon-base bx bx-user icon-lg"></i>
-                </span>
-              </div>
+              <small class="mb-0">Total {{ $roleName }} Users</small>
+            </div>
+            <div class="avatar">
+              <span class="avatar-initial rounded bg-label-info">
+                <i class="icon-base bx bx-user icon-lg"></i>
+              </span>
             </div>
           </div>
         </div>
       </div>
+    </div>
     @endforeach
   </div>
   <!-- Users List Table -->
@@ -97,9 +97,14 @@
       <div class="offcanvas-body mx-0 flex-grow-0 p-6 h-100">
         <form class="add-new-user pt-0" id="addNewUserForm" onsubmit="return false">
           <div class="mb-6 form-control-validation">
-            <label class="form-label" for="add-user-fullname">Full Name</label>
-            <input type="text" class="form-control" id="add-user-fullname" placeholder="John Doe" name="userFullname"
-              aria-label="John Doe" />
+            <label class="form-label" for="add-user-firstname">First Name</label>
+            <input type="text" class="form-control" id="add-user-firstname" placeholder="John" name="userFirstName"
+              aria-label="John" />
+          </div>
+          <div class="mb-6 form-control-validation">
+            <label class="form-label" for="add-user-lastname">Last Name</label>
+            <input type="text" class="form-control" id="add-user-lastname" placeholder="Doe" name="userLastName"
+              aria-label="Doe" />
           </div>
           <div class="mb-6 form-control-validation">
             <label class="form-label" for="add-user-email">Email</label>
@@ -108,19 +113,18 @@
           </div>
           <div class="mb-6 form-control-validation">
             <label class="form-label" for="add-user-password">Password</label>
-            <input type="password" id="add-user-password" class="form-control"
-              placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-              aria-label="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" name="password" />
+            <input type="password" id="add-user-password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+              aria-label="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" name="password" autocomplete="new-password" />
           </div>
           <div class="mb-6 form-control-validation">
             <label class="form-label" for="add-user-contact">Contact</label>
-            <input type="text" id="add-user-contact" class="form-control phone-mask" placeholder="+256 750 000 000"
+            <input type="text" id="add-user-contact" class="form-control phone-mask" placeholder="+1 (609) 988-44-11"
               aria-label="john.doe@example.com" name="userContact" />
           </div>
           <div class="mb-6 form-control-validation">
             <label class="form-label" for="user-role">User Role</label>
             <select id="user-role" name="userRole" class="form-select">
-              @foreach (Spatie\Permission\Models\Role::all() as $role)
+              @foreach (Spatie\Permission\Models\Role::where('guard_name', config('auth.defaults.guard'))->get() as $role)
                 <option value="{{ $role->name }}">{{ $role->name }}</option>
               @endforeach
             </select>

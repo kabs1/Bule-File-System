@@ -29,7 +29,7 @@
           </div>
           <h4 class="mb-0">42</h4>
         </div>
-        <p class="mb-2">On route vehicles</p>
+        <p class="mb-2">Tocal Customers</p>
         <p class="mb-0">
           <span class="text-heading fw-medium me-2">+18.2%</span>
           <span class="text-body-secondary">than last week</span>
@@ -46,7 +46,7 @@
           </div>
           <h4 class="mb-0">8</h4>
         </div>
-        <p class="mb-2">Vehicles with errors</p>
+        <p class="mb-2">Tatol Lots</p>
         <p class="mb-0">
           <span class="text-heading fw-medium me-2">-8.7%</span>
           <span class="text-body-secondary">than last week</span>
@@ -64,7 +64,7 @@
           </div>
           <h4 class="mb-0">27</h4>
         </div>
-        <p class="mb-2">Deviated from route</p>
+        <p class="mb-2">Total Inwards</p>
         <p class="mb-0">
           <span class="text-heading fw-medium me-2">+4.3%</span>
           <span class="text-body-secondary">than last week</span>
@@ -81,7 +81,7 @@
           </div>
           <h4 class="mb-0">13</h4>
         </div>
-        <p class="mb-2">Late vehicles</p>
+        <p class="mb-2">Open Inwards</p>
         <p class="mb-0">
           <span class="text-heading fw-medium me-2">-2.5%</span>
           <span class="text-body-secondary">than last week</span>
@@ -90,154 +90,9 @@
     </div>
   </div>
   <!--/ Card Border Shadow -->
-  <!-- Vehicles overview -->
-  <div class="col-xxl-6">
-    <div class="card h-100">
-      <div class="card-header d-flex align-items-center justify-content-between gap-2">
-        <div class="card-title mb-0">
-          <h5 class="m-0 me-2">Vehicles Overview</h5>
-        </div>
-        <div class="dropdown">
-          <button class="btn p-0" type="button" id="vehiclesOverview" data-bs-toggle="dropdown" aria-haspopup="true"
-            aria-expanded="false">
-            <i class="icon-base bx bx-dots-vertical-rounded icon-lg text-body-secondary"></i>
-          </button>
-          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="vehiclesOverview">
-            <a class="dropdown-item" href="javascript:void(0);">Select All</a>
-            <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-            <a class="dropdown-item" href="javascript:void(0);">Share</a>
-          </div>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="d-none d-lg-flex vehicles-progress-labels mb-6">
-          <div class="vehicles-progress-label on-the-way-text" style="width: 39.7%;">On the way</div>
-          <div class="vehicles-progress-label unloading-text" style="width: 28.3%;">Unloading</div>
-          <div class="vehicles-progress-label loading-text" style="width: 17.4%;">Loading</div>
-          <div class="vehicles-progress-label waiting-text text-nowrap" style="width: 14.6%;">Waiting</div>
-        </div>
-        <div class="vehicles-overview-progress progress rounded-3 mb-6 bg-transparent overflow-hidden"
-          style="height: 46px;">
-          <div class="progress-bar fw-medium text-start shadow-none bg-lighter text-heading px-4 rounded-0"
-            role="progressbar" style="width: 39.7%" aria-valuenow="39.7" aria-valuemin="0" aria-valuemax="100">39.7%
-          </div>
-          <div class="progress-bar fw-medium text-start shadow-none bg-primary px-4" role="progressbar"
-            style="width: 28.3%" aria-valuenow="28.3" aria-valuemin="0" aria-valuemax="100">28.3%</div>
-          <div class="progress-bar fw-medium text-start shadow-none text-bg-info px-2 px-sm-4" role="progressbar"
-            style="width: 17.4%" aria-valuenow="17.4" aria-valuemin="0" aria-valuemax="100">17.4%</div>
-          <div class="progress-bar fw-medium text-start shadow-none snackbar text-paper px-1 px-sm-3 rounded-0 px-lg-4"
-            role="progressbar" style="width: 14.6%" aria-valuenow="14.6" aria-valuemin="0" aria-valuemax="100">14.6%
-          </div>
-        </div>
-        <div class="table-responsive">
-          <table class="table card-table table-border-top-0">
-            <tbody class="table-border-bottom-0">
-              <tr>
-                <td class="w-50 ps-0">
-                  <div class="d-flex justify-content-start align-items-center">
-                    <div class="me-2">
-                      <i class="icon-base bx bx-car icon-lg text-heading"></i>
-                    </div>
-                    <h6 class="mb-0 fw-normal">On the way</h6>
-                  </div>
-                </td>
-                <td class="text-end pe-0 text-nowrap">
-                  <h6 class="mb-0">2hr 10min</h6>
-                </td>
-                <td class="text-end pe-0">
-                  <span>39.7%</span>
-                </td>
-              </tr>
-              <tr>
-                <td class="w-50 ps-0">
-                  <div class="d-flex justify-content-start align-items-center">
-                    <div class="me-2">
-                      <i class="icon-base bx bx-down-arrow-circle icon-lg text-heading"></i>
-                    </div>
-                    <h6 class="mb-0 fw-normal">Unloading</h6>
-                  </div>
-                </td>
-                <td class="text-end pe-0 text-nowrap">
-                  <h6 class="mb-0">3hr 15min</h6>
-                </td>
-                <td class="text-end pe-0">
-                  <span>28.3%</span>
-                </td>
-              </tr>
-              <tr>
-                <td class="w-50 ps-0">
-                  <div class="d-flex justify-content-start align-items-center">
-                    <div class="me-2">
-                      <i class="icon-base bx bx-up-arrow-circle icon-lg text-heading"></i>
-                    </div>
-                    <h6 class="mb-0 fw-normal">Loading</h6>
-                  </div>
-                </td>
-                <td class="text-end pe-0 text-nowrap">
-                  <h6 class="mb-0">1hr 24min</h6>
-                </td>
-                <td class="text-end pe-0">
-                  <span>17.4%</span>
-                </td>
-              </tr>
-              <tr>
-                <td class="w-50 ps-0">
-                  <div class="d-flex justify-content-start align-items-center">
-                    <div class="me-2">
-                      <i class="icon-base bx bx-time-five icon-lg text-heading"></i>
-                    </div>
-                    <h6 class="mb-0 fw-normal">Waiting</h6>
-                  </div>
-                </td>
-                <td class="text-end pe-0 text-nowrap">
-                  <h6 class="mb-0">5hr 19min</h6>
-                </td>
-                <td class="text-end pe-0">
-                  <span>14.6%</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
+  
   <!--/ Vehicles overview -->
-  <!-- Shipment statistics-->
-  <div class="col-xxl-6 col-lg-7">
-    <div class="card h-100">
-      <div class="card-header d-flex align-items-center justify-content-between">
-        <div class="card-title mb-0">
-          <h5 class="mb-1">Shipment statistics</h5>
-          <p class="card-subtitle">Total number of deliveries 23.8k</p>
-        </div>
-        <div class="btn-group">
-          <button type="button" class="btn btn-label-primary">January</button>
-          <button type="button" class="btn btn-label-primary dropdown-toggle dropdown-toggle-split"
-            data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="visually-hidden">Toggle Dropdown</span>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="javascript:void(0);">January</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0);">February</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0);">March</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0);">April</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0);">May</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0);">June</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0);">July</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0);">August</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0);">September</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0);">October</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0);">November</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0);">December</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="card-body">
-        <div id="shipmentStatisticsChart"></div>
-      </div>
-    </div>
-  </div>
+  
   <!--/ Shipment statistics -->
   <!-- Delivery Performance -->
   <div class="col-xxl-4 col-lg-5">
@@ -267,14 +122,14 @@
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
-                <h6 class="mb-1 fw-normal">Packages in transit</h6>
+                <h6 class="mb-1 fw-normal">Total Packages</h6>
                 <p class="text-success mb-0">
                   <i class="icon-base bx bx-chevron-up icon-lg me-1"></i>
-                  25.8%
+                  5038
                 </p>
               </div>
               <div class="user-progress">
-                <h6 class="mb-0">10k</h6>
+                <h6 class="mb-0">5038</h6>
               </div>
             </div>
           </li>
@@ -284,14 +139,14 @@
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
-                <h6 class="mb-1 fw-normal">Packages out for delivery</h6>
+                <h6 class="mb-1 fw-normal">Packages delivered</h6>
                 <p class="text-success mb-0">
                   <i class="icon-base bx bx-chevron-up icon-lg me-1"></i>
-                  4.3%
+                  4000
                 </p>
               </div>
               <div class="user-progress">
-                <h6 class="mb-0">5k</h6>
+                <h6 class="mb-0">4000</h6>
               </div>
             </div>
           </li>
@@ -302,14 +157,14 @@
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
-                <h6 class="mb-1 fw-normal">Packages delivered</h6>
+                <h6 class="mb-1 fw-normal">Packages out for delivery</h6>
                 <p class="text-danger mb-0">
                   <i class="icon-base bx bx-chevron-down icon-lg me-1"></i>
-                  12.5
+                  3829
                 </p>
               </div>
               <div class="user-progress">
-                <h6 class="mb-0">15k</h6>
+                <h6 class="mb-0">2829</h6>
               </div>
             </div>
           </li>
@@ -320,14 +175,14 @@
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
-                <h6 class="mb-1 fw-normal">Delivery success rate</h6>
+                <h6 class="mb-1 fw-normal">Packages Purchased</h6>
                 <p class="text-success mb-0">
                   <i class="icon-base bx bx-chevron-up icon-lg me-1"></i>
-                  35.6%
+                  7009
                 </p>
               </div>
               <div class="user-progress">
-                <h6 class="mb-0">95%</h6>
+                <h6 class="mb-0">7009</h6>
               </div>
             </div>
           </li>
@@ -338,14 +193,14 @@
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
-                <h6 class="mb-1 fw-normal">Average delivery time</h6>
+                <h6 class="mb-1 fw-normal">Packages Tested</h6>
                 <p class="text-danger mb-0">
                   <i class="icon-base bx bx-chevron-down icon-lg me-1"></i>
-                  2.15
+                  80023
                 </p>
               </div>
               <div class="user-progress">
-                <h6 class="mb-0">2.5 Days</h6>
+                <h6 class="mb-0">80023</h6>
               </div>
             </div>
           </li>
@@ -355,14 +210,14 @@
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
-                <h6 class="mb-1 fw-normal">Customer satisfaction</h6>
+                <h6 class="mb-1 fw-normal">PAckages Melted</h6>
                 <p class="text-success mb-0">
                   <i class="icon-base bx bx-chevron-up icon-lg me-1"></i>
-                  5.7%
+                  70023
                 </p>
               </div>
               <div class="user-progress">
-                <h6 class="mb-0">4.5/5</h6>
+                <h6 class="mb-0">70023</h6>
               </div>
             </div>
           </li>
@@ -401,7 +256,7 @@
     <div class="card h-100">
       <div class="card-header d-flex justify-content-between">
         <div class="card-title mb-0">
-          <h5 class="mb-1">Orders by Countries</h5>
+          <h5 class="mb-1">Purchases</h5>
           <p class="card-subtitle">62 deliveries in progress</p>
         </div>
         <div class="dropdown">
@@ -446,8 +301,8 @@
                     <div class="timeline-header">
                       <small class="text-success text-uppercase">sender</small>
                     </div>
-                    <h6 class="my-50">Myrtle Ullrich</h6>
-                    <p class="text-body mb-0">101 Boulder, California(CA), 95959</p>
+                    <h6 class="my-50">Aisha Nakato</h6>
+                    <p class="text-body mb-0">Plot 101, Kampala, Uganda</p>
                   </div>
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
@@ -458,8 +313,8 @@
                     <div class="timeline-header">
                       <small class="text-primary text-uppercase">Receiver</small>
                     </div>
-                    <h6 class="my-50">Barry Schowalter</h6>
-                    <p class="text-body mb-0">939 Orange, California(CA), 92118</p>
+                    <h6 class="my-50">Musa Ssekitoleko</h6>
+                    <p class="text-body mb-0">939 Entebbe Road, Wakiso, Uganda</p>
                   </div>
                 </li>
               </ul>
@@ -473,8 +328,8 @@
                     <div class="timeline-header">
                       <small class="text-success text-uppercase">sender</small>
                     </div>
-                    <h6 class="my-50">Veronica Herman</h6>
-                    <p class="text-body mb-0">162 Windsor, California(CA), 95492</p>
+                    <h6 class="my-50">Nalule Sarah</h6>
+                    <p class="text-body mb-0">162 Gulu Road, Gulu, Uganda</p>
                   </div>
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
@@ -485,8 +340,8 @@
                     <div class="timeline-header">
                       <small class="text-primary text-uppercase">Receiver</small>
                     </div>
-                    <h6 class="my-50">Helen Jacobs</h6>
-                    <p class="text-body mb-0">487 Sunset, California(CA), 94043</p>
+                    <h6 class="my-50">Kato David</h6>
+                    <p class="text-body mb-0">487 Jinja Road, Jinja, Uganda</p>
                   </div>
                 </li>
               </ul>
@@ -501,8 +356,8 @@
                     <div class="timeline-header">
                       <small class="text-success text-uppercase">sender</small>
                     </div>
-                    <h6 class="my-50">Barry Schowalter</h6>
-                    <p class="text-body mb-0">939 Orange, California(CA), 92118</p>
+                    <h6 class="my-50">Musa Ssekitoleko</h6>
+                    <p class="text-body mb-0">939 Entebbe Road, Wakiso, Uganda</p>
                   </div>
                 </li>
                 <li class="timeline-item ps-6 border-transparent border-left-dashed">
@@ -513,8 +368,8 @@
                     <div class="timeline-header">
                       <small class="text-primary text-uppercase">Receiver</small>
                     </div>
-                    <h6 class="my-50">Myrtle Ullrich</h6>
-                    <p class="text-body mb-0">101 Boulder, California(CA), 95959</p>
+                    <h6 class="my-50">Aisha Nakato</h6>
+                    <p class="text-body mb-0">Plot 101, Kampala, Uganda</p>
                   </div>
                 </li>
               </ul>
@@ -528,8 +383,8 @@
                     <div class="timeline-header">
                       <small class="text-success text-uppercase">sender</small>
                     </div>
-                    <h6 class="my-50">Veronica Herman</h6>
-                    <p class="text-body mb-0">162 Windsor, California(CA), 95492</p>
+                    <h6 class="my-50">Nalule Sarah</h6>
+                    <p class="text-body mb-0">162 Gulu Road, Gulu, Uganda</p>
                   </div>
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
@@ -540,8 +395,8 @@
                     <div class="timeline-header">
                       <small class="text-primary text-uppercase">Receiver</small>
                     </div>
-                    <h6 class="my-50">Helen Jacobs</h6>
-                    <p class="text-body mb-0">487 Sunset, California(CA), 94043</p>
+                    <h6 class="my-50">Kato David</h6>
+                    <p class="text-body mb-0">487 Jinja Road, Jinja, Uganda</p>
                   </div>
                 </li>
               </ul>
@@ -556,8 +411,8 @@
                     <div class="timeline-header">
                       <small class="text-success text-uppercase">sender</small>
                     </div>
-                    <h6 class="my-50">Veronica Herman</h6>
-                    <p class="text-body mb-0">101 Boulder, California(CA), 95959</p>
+                    <h6 class="my-50">Nalule Sarah</h6>
+                    <p class="text-body mb-0">Plot 101, Kampala, Uganda</p>
                   </div>
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
@@ -568,8 +423,8 @@
                     <div class="timeline-header">
                       <small class="text-primary text-uppercase">Receiver</small>
                     </div>
-                    <h6 class="my-50">Barry Schowalter</h6>
-                    <p class="text-body mb-0">939 Orange, California(CA), 92118</p>
+                    <h6 class="my-50">Musa Ssekitoleko</h6>
+                    <p class="text-body mb-0">939 Entebbe Road, Wakiso, Uganda</p>
                   </div>
                 </li>
               </ul>
@@ -583,8 +438,8 @@
                     <div class="timeline-header">
                       <small class="text-success text-uppercase">sender</small>
                     </div>
-                    <h6 class="my-50">Myrtle Ullrich</h6>
-                    <p class="text-body mb-0">162 Windsor, California(CA), 95492</p>
+                    <h6 class="my-50">Aisha Nakato</h6>
+                    <p class="text-body mb-0">162 Gulu Road, Gulu, Uganda</p>
                   </div>
                 </li>
                 <li class="timeline-item ps-6 border-transparent">
@@ -595,8 +450,8 @@
                     <div class="timeline-header">
                       <small class="text-primary text-uppercase">Receiver</small>
                     </div>
-                    <h6 class="my-50">Helen Jacobs</h6>
-                    <p class="text-body mb-0">487 Sunset, California(CA), 94043</p>
+                    <h6 class="my-50">Kato David</h6>
+                    <p class="text-body mb-0">487 Jinja Road, Jinja, Uganda</p>
                   </div>
                 </li>
               </ul>
@@ -607,42 +462,7 @@
     </div>
   </div>
   <!--/ Orders by Countries -->
-  <!-- On route vehicles Table -->
-  <div class="col-12 order-5">
-    <div class="card">
-      <div class="card-header d-flex align-items-center justify-content-between">
-        <div class="card-title mb-0">
-          <h5 class="m-0 me-2">On route vehicles</h5>
-        </div>
-        <div class="dropdown">
-          <button class="btn text-body-secondary p-0" type="button" id="routeVehicles" data-bs-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
-            <i class="icon-base bx bx-dots-vertical-rounded icon-lg"></i>
-          </button>
-          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="routeVehicles">
-            <a class="dropdown-item" href="javascript:void(0);">Select All</a>
-            <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-            <a class="dropdown-item" href="javascript:void(0);">Share</a>
-          </div>
-        </div>
-      </div>
-      <div class="card-datatable border-top">
-        <table class="dt-route-vehicles table">
-          <thead>
-            <tr>
-              <th></th>
-              <th></th>
-              <th>location</th>
-              <th>starting route</th>
-              <th>ending route</th>
-              <th>warnings</th>
-              <th class="w-20">progress</th>
-            </tr>
-          </thead>
-        </table>
-      </div>
-    </div>
-  </div>
+ 
   <!--/ On route vehicles Table -->
 </div>
 

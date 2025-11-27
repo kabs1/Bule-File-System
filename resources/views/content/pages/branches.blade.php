@@ -3,11 +3,11 @@
 @section('title', 'Branches - Apps')
 
 @section('vendor-style')
-  @vite(['resources/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.scss', 'resources/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.scss', 'resources/assets/vendor/libs/@form-validation/form-validation.scss', 'resources/assets/vendor/libs/toastr/toastr.scss'])
+  @vite(['resources/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.scss', 'resources/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.scss', 'resources/assets/vendor/libs/@form-validation/form-validation.scss'])
 @endsection
 
 @section('vendor-script')
-  @vite(['resources/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js', 'resources/assets/vendor/libs/@form-validation/popular.js', 'resources/assets/vendor/libs/@form-validation/bootstrap5.js', 'resources/assets/vendor/libs/@form-validation/auto-focus.js', 'resources/assets/vendor/libs/toastr/toastr.js'])
+  @vite(['resources/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js', 'resources/assets/vendor/libs/@form-validation/popular.js', 'resources/assets/vendor/libs/@form-validation/bootstrap5.js', 'resources/assets/vendor/libs/@form-validation/auto-focus.js'])
 @endsection
 
 @section('page-script')
@@ -70,11 +70,11 @@
       <form id="addBranchForm" class="row">
         <div class="col-12 form-control-validation mb-4">
           <label class="form-label" for="modalBranchName">Branch Name</label>
-          <input type="text" id="modalBranchName" name="name" class="form-control" />
+          <input type="text" id="modalBranchName" name="branchName" class="form-control" />
         </div>
         <div class="col-12 form-control-validation mb-4">
           <label class="form-label" for="modalBranchLocation">Description</label>
-          <input type="text" id="modalBranchLocation" name="location" class="form-control" />
+          <input type="text" id="modalBranchLocation" name="branchLocation" class="form-control" />
         </div>
         <div class="col-12 text-center demo-vertical-spacing">
           <button type="submit" class="btn btn-primary me-sm-4 me-1 data-submit">Submit</button>

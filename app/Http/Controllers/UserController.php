@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Branch; // Import the Branch model
+use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role; // Import the Role model
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -34,114 +35,115 @@ class UserController extends Controller
         $data = [];
         foreach ($users as $user) {
             $fullName = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? ''));
-            $roleName = $user->roles->first()->name ?? 'N/A';
+            $roleName = $user->roles->pluck('name')->first() ?? '';
             $data[] = [
                 'id' => $user->user_id,
-                'full_name' => $fullName !== '' ? $fullName : ($user->username ?? 'N/A'),
+                'full_name' => $fullName,
                 'email' => $user->email,
+                'avatar' => null,
                 'role' => $roleName,
                 'status' => $user->status,
                 'created_by' => $user->creator ? ($user->creator->first_name . ' ' . $user->creator->last_name) : 'N/A',
                 'branch' => $user->branch ? $user->branch->branch_name : 'N/A',
-                'avatar' => $user->profile_picture,
                 'action' => ''
             ];
         }
         return response()->json(['data' => $data]);
     }
 
-    public function edit(User $user)
+    public function show(User $user): JsonResponse
     {
-        $user->load(['roles', 'branch']);
-        $fullName = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? ''));
+        $user->load(['roles']);
         return response()->json([
             'id' => $user->user_id,
-            'name' => $fullName !== '' ? $fullName : ($user->username ?? ''),
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
             'email' => $user->email,
-            'roles' => $user->roles->map(fn($r) => ['name' => $r->name]),
+            'role' => $user->roles->pluck('name')->first(), // Send single role name
             'branch_id' => $user->branch_id,
+            'status' => $user->status,
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-        $request->validate([
-            'userFullname' => 'required|string|max:255',
-            'userEmail' => 'required|string|email|max:255|unique:users,email',
-            'userContact' => 'nullable|string|max:255',
+        $validatedData = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8',
-            'userRole' => 'required|string|exists:roles,name',
-            'branchId' => 'required|integer|exists:branches,branch_id',
+            'role' => [
+                'required',
+                'string',
+                Rule::exists('roles', 'name')->where(function ($query) {
+                    $query->where('guard_name', config('auth.defaults.guard'));
+                }),
+            ],
+            'branch_id' => 'required|integer|exists:branches,branch_id',
         ]);
-
-        $names = preg_split('/\s+/', $request->userFullname, -1, PREG_SPLIT_NO_EMPTY);
-        $first = $names[0] ?? '';
-        $last = isset($names[1]) ? implode(' ', array_slice($names, 1)) : '';
 
         $user = User::create([
-            'first_name' => $first,
-            'last_name' => $last,
-            'email' => $request->userEmail,
-            'contact' => $request->userContact,
-            'username' => $request->userEmail,
-            'password' => Hash::make($request->password),
-            'profile_picture' => null,
-            'all_branch_access' => false,
-            'role_id' => $request->userRole,
-            'status' => 2,
+            'first_name' => $validatedData['first_name'],
+            'last_name' => $validatedData['last_name'],
+            'email' => $validatedData['email'],
+            'username' => $validatedData['email'], // Consider if username is needed
+            'password' => Hash::make($validatedData['password']),
+            'status' => 2, // Assuming 2 = Active
             'created_by_user_id' => auth()->id(),
-            'branch_id' => $request->branchId,
+            'branch_id' => $validatedData['branch_id'],
+            // Do NOT set role_id here. Spatie/permission handles this.
         ]);
 
-        $user->assignRole($request->userRole);
+        $user->assignRole($validatedData['role']);
 
-        return response()->json(['message' => 'User created successfully.']);
+        return response()->json(['message' => 'User created successfully.', 'user' => $user], 201);
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user): JsonResponse
     {
-        $request->validate([
-            'userFullname' => 'required|string|max:255',
-            'userEmail' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->user_id, 'user_id')],
-            'userContact' => 'nullable|string|max:255',
-            'userRole' => 'required|string|exists:roles,name',
-            'branchId' => 'required|integer|exists:branches,branch_id',
+        $validatedData = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->user_id, 'user_id')],
+            'role' => [
+                'required',
+                'string',
+                Rule::exists('roles', 'name')->where(function ($query) {
+                    $query->where('guard_name', config('auth.defaults.guard'));
+                }),
+            ],
+            'branch_id' => 'required|integer|exists:branches,branch_id',
         ]);
-
-        $names = preg_split('/\s+/', $request->userFullname, -1, PREG_SPLIT_NO_EMPTY);
-        $first = $names[0] ?? '';
-        $last = isset($names[1]) ? implode(' ', array_slice($names, 1)) : '';
 
         $user->update([
-            'first_name' => $first,
-            'last_name' => $last,
-            'email' => $request->userEmail,
-            'contact' => $request->userContact,
-            'username' => $request->userEmail,
-            'role_id' => $request->userRole,
-            'branch_id' => $request->branchId,
+            'first_name' => $validatedData['first_name'],
+            'last_name' => $validatedData['last_name'],
+            'email' => $validatedData['email'],
+            'branch_id' => $validatedData['branch_id'],
         ]);
 
-        $user->syncRoles([$request->userRole]);
+        $user->syncRoles($validatedData['role']);
 
         return response()->json(['message' => 'User updated successfully.']);
     }
 
-    public function destroy(User $user)
+    public function destroy(User $user): JsonResponse
     {
         $user->delete();
         return response()->json(['message' => 'User deleted successfully.']);
     }
 
-    public function suspend(User $user)
+    public function suspend(User $user): JsonResponse
     {
-        $user->update(['status' => 3]);
-        return response()->json(['message' => 'User suspended successfully.', 'status' => $user->status]);
+        $user->status = 3;
+        $user->save();
+        return response()->json(['message' => 'User suspended successfully.']);
     }
 
-    public function activate(User $user)
+    public function activate(User $user): JsonResponse
     {
-        $user->update(['status' => 2]);
-        return response()->json(['message' => 'User activated successfully.', 'status' => $user->status]);
+        $user->status = 2;
+        $user->save();
+        return response()->json(['message' => 'User activated successfully.']);
     }
 }

@@ -145,13 +145,44 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const addMeasureForm = document.getElementById('addMeasureUnitForm');
   if (addMeasureForm) {
-    addMeasureForm.addEventListener('submit', function (e) {
-      e.preventDefault();
+    // Add/Edit Measure Unit Form Validation
+    const fv = FormValidation.formValidation(addMeasureForm, {
+      fields: {
+        measureName: {
+          validators: {
+            notEmpty: {
+              message: 'Please enter measure unit name'
+            }
+          }
+        },
+        measureShort: {
+          validators: {
+            notEmpty: {
+              message: 'Please enter measure unit short name'
+            }
+          }
+        }
+      },
+      plugins: {
+        trigger: new FormValidation.plugins.Trigger(),
+        bootstrap5: new FormValidation.plugins.Bootstrap5({
+          eleValidClass: '',
+          rowSelector: function (field, ele) {
+            return '.form-control-validation';
+          }
+        }),
+        submitButton: new FormValidation.plugins.SubmitButton(),
+        autoFocus: new FormValidation.plugins.AutoFocus()
+      }
+    }).on('core.form.valid', function () {
+      // When the form is submitted and all fields are valid
+      const form = addMeasureForm;
+      const formData = new FormData(form);
       const data = {
-        name: document.getElementById('measure-name').value,
-        short_name: document.getElementById('measure-short').value
+        name: formData.get('measureName'),
+        short_name: formData.get('measureShort')
       };
-      const id = addMeasureForm.getAttribute('data-id');
+      const id = form.getAttribute('data-id');
       const method = id ? 'PUT' : 'POST';
       const url = id ? `/measure-units/${id}` : '/measure-units';
       fetch(url, {
@@ -181,11 +212,62 @@ document.addEventListener('DOMContentLoaded', function () {
             dt.ajax.reload();
             addMeasureForm.reset();
             addMeasureForm.removeAttribute('data-id');
+            fv.resetForm(true); // Reset form validation
+            if (window.toastr) {
+              toastr.success(res.message, 'Success!', {
+                closeButton: true,
+                tapToDismiss: false,
+                rtl: isRtl
+              });
+            } else {
+              alert('Success: ' + res.message);
+            }
+          } else if (res.errors) {
+            for (const [key, value] of Object.entries(res.errors)) {
+              if (window.toastr) {
+                toastr.error(value, 'Error!', {
+                  closeButton: true,
+                  tapToDismiss: false,
+                  rtl: isRtl
+                });
+              } else {
+                alert('Error: ' + value);
+              }
+            }
           }
         })
-        .catch(err => {
+        .catch(async err => {
           console.error('Measure Unit save failed:', err);
-          alert('Failed to save measure unit. Please check inputs and try again.');
+          let errorResponse = null;
+          try {
+            errorResponse = JSON.parse(err.message);
+          } catch (e) {
+            // If parsing fails, it's not a JSON error response, so we'll treat it as a generic error
+          }
+
+          if (errorResponse && typeof errorResponse === 'object' && errorResponse.errors) {
+            for (const [key, value] of Object.entries(errorResponse.errors)) {
+              if (window.toastr) {
+                toastr.error(value, 'Error!', {
+                  closeButton: true,
+                  tapToDismiss: false,
+                  rtl: isRtl
+                });
+              } else {
+                alert('Error: ' + value);
+              }
+            }
+          } else {
+            if (window.toastr) {
+              toastr.error('An unexpected error occurred. Please try again.', 'Error!', {
+                closeButton: true,
+                tapToDismiss: false,
+                rtl: isRtl
+              });
+            } else {
+              alert('Error: An unexpected error occurred. Please try again.');
+            }
+          }
         });
     });
   }

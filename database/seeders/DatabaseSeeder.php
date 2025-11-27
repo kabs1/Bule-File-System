@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create a super admin role
         $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin']);
 
         // Create a super user
@@ -34,20 +33,29 @@ class DatabaseSeeder extends Seeder
         // Assign the super admin role to the super user
         $superUser->assignRole($superAdminRole);
 
-        // Give all permissions to the super admin role
-        $allPermissions = Permission::all();
-        // Create permissions for Backup
-        Permission::firstOrCreate(['name' => 'backup.view']);
-        Permission::firstOrCreate(['name' => 'backup.create']);
-        Permission::firstOrCreate(['name' => 'backup.delete']);
+        // Core Role permissions
+        Permission::firstOrCreate(['name' => 'view role']);
+        Permission::firstOrCreate(['name' => 'create role']);
+        Permission::firstOrCreate(['name' => 'update role']);
+        Permission::firstOrCreate(['name' => 'delete role']);
 
-        // Create permissions for Activity Log
-        Permission::firstOrCreate(['name' => 'activity_log.view']);
-        Permission::firstOrCreate(['name' => 'activity_log.delete']);
+        // Core Permission permissions
+        Permission::firstOrCreate(['name' => 'view permission']);
+        Permission::firstOrCreate(['name' => 'create permission']);
+        Permission::firstOrCreate(['name' => 'update permission']);
+        Permission::firstOrCreate(['name' => 'delete permission']);
 
-        // Give all permissions to the super admin role
-        $allPermissions = Permission::all();
-        $superAdminRole->syncPermissions($allPermissions);
+        // Backup permissions (match Blade checks)
+        Permission::firstOrCreate(['name' => 'create backup']);
+        Permission::firstOrCreate(['name' => 'download backup']);
+        Permission::firstOrCreate(['name' => 'delete backup']);
+
+        // Activity Log permissions (if needed)
+        Permission::firstOrCreate(['name' => 'view activity log']);
+        Permission::firstOrCreate(['name' => 'delete activity log']);
+
+        // Assign all permissions to super admin
+        $superAdminRole->syncPermissions(Permission::all());
 
         // Optionally create a regular user
         User::firstOrCreate(

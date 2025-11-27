@@ -73,7 +73,7 @@
       ]
     },
     {
-      "url": "/customer-management",
+      "url": "/app/customers",
       "name": "Customer Management",
       "icon": "menu-icon icon-base bx bx-group",
       "slug": "customer-management"

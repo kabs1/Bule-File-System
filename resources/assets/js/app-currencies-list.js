@@ -148,15 +148,53 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const addCurrencyForm = document.getElementById('addCurrencyForm');
   if (addCurrencyForm) {
-    addCurrencyForm.addEventListener('submit', function (e) {
-      e.preventDefault();
+    // Add/Edit Currency Form Validation
+    const fv = FormValidation.formValidation(addCurrencyForm, {
+      fields: {
+        currencyName: {
+          validators: {
+            notEmpty: {
+              message: 'Please enter currency name'
+            }
+          }
+        },
+        currencyCode: {
+          validators: {
+            notEmpty: {
+              message: 'Please enter currency code'
+            }
+          }
+        },
+        currencySymbol: {
+          validators: {
+            notEmpty: {
+              message: 'Please enter currency symbol'
+            }
+          }
+        }
+      },
+      plugins: {
+        trigger: new FormValidation.plugins.Trigger(),
+        bootstrap5: new FormValidation.plugins.Bootstrap5({
+          eleValidClass: '',
+          rowSelector: function (field, ele) {
+            return '.form-control-validation';
+          }
+        }),
+        submitButton: new FormValidation.plugins.SubmitButton(),
+        autoFocus: new FormValidation.plugins.AutoFocus()
+      }
+    }).on('core.form.valid', function () {
+      // When the form is submitted and all fields are valid
+      const form = addCurrencyForm;
+      const formData = new FormData(form);
       const data = {
-        name: document.getElementById('currency-name').value,
-        code: document.getElementById('currency-code').value,
-        symbol: document.getElementById('currency-symbol').value
+        name: formData.get('currencyName'),
+        code: formData.get('currencyCode'),
+        symbol: formData.get('currencySymbol')
         // is_default: document.getElementById('currency-default').checked ? 1 : 0
       };
-      const id = addCurrencyForm.getAttribute('data-id');
+      const id = form.getAttribute('data-id');
       const method = id ? 'PUT' : 'POST';
       const url = id ? `/currencies/${id}` : '/currencies';
       fetch(url, {
@@ -186,11 +224,62 @@ document.addEventListener('DOMContentLoaded', function () {
             dt.ajax.reload();
             addCurrencyForm.reset();
             addCurrencyForm.removeAttribute('data-id');
+            fv.resetForm(true); // Reset form validation
+            if (window.toastr) {
+              toastr.success(res.message, 'Success!', {
+                closeButton: true,
+                tapToDismiss: false,
+                rtl: isRtl
+              });
+            } else {
+              alert('Success: ' + res.message);
+            }
+          } else if (res.errors) {
+            for (const [key, value] of Object.entries(res.errors)) {
+              if (window.toastr) {
+                toastr.error(value, 'Error!', {
+                  closeButton: true,
+                  tapToDismiss: false,
+                  rtl: isRtl
+                });
+              } else {
+                alert('Error: ' + value);
+              }
+            }
           }
         })
-        .catch(err => {
+        .catch(async err => {
           console.error('Currency save failed:', err);
-          alert('Failed to save currency. Please check inputs and try again.');
+          let errorResponse = null;
+          try {
+            errorResponse = JSON.parse(err.message);
+          } catch (e) {
+            // If parsing fails, it's not a JSON error response, so we'll treat it as a generic error
+          }
+
+          if (errorResponse && typeof errorResponse === 'object' && errorResponse.errors) {
+            for (const [key, value] of Object.entries(errorResponse.errors)) {
+              if (window.toastr) {
+                toastr.error(value, 'Error!', {
+                  closeButton: true,
+                  tapToDismiss: false,
+                  rtl: isRtl
+                });
+              } else {
+                alert('Error: ' + value);
+              }
+            }
+          } else {
+            if (window.toastr) {
+              toastr.error('An unexpected error occurred. Please try again.', 'Error!', {
+                closeButton: true,
+                tapToDismiss: false,
+                rtl: isRtl
+              });
+            } else {
+              alert('Error: An unexpected error occurred. Please try again.');
+            }
+          }
         });
     });
   }

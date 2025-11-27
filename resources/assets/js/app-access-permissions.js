@@ -64,13 +64,24 @@ document.addEventListener('DOMContentLoaded', function () {
           searchable: false,
           orderable: false,
           render: function (data, type, full, meta) {
+            const actions = [];
+            if (window.canDeletePermission) {
+              actions.push(
+                `<a href=\"javascript:;\" data-id=\"${full['id']}\" class=\"btn btn-icon delete-record\"><i class=\"icon-base bx bx-trash icon-md\"></i></a>`
+              );
+            }
+            actions.push(
+              `<a href=\"javascript:;\" class=\"btn btn-icon dropdown-toggle hide-arrow\" data-bs-toggle=\"dropdown\"><i class=\"icon-base bx bx-dots-vertical-rounded icon-md\"></i></a>`
+            );
+            const dropdownItems = [];
+            if (window.canUpdatePermission) {
+              dropdownItems.push('<a href="javascript:;" class="dropdown-item permission-edit-modal">Edit</a>');
+            }
             return `
               <div class="d-flex align-items-center">
-                <a href="javascript:;" class="btn btn-icon delete-record"><i class="icon-base bx bx-trash icon-md"></i></a>
-                <a href="javascript:;" class="btn btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded icon-md"></i></a>
+                ${actions.join('')}
                 <div class="dropdown-menu dropdown-menu-end m-0">
-                  <a href="javascript:;" class="dropdown-item">Edit</a>
-                  <a href="javascript:;" class="dropdown-item">Suspend</a>
+                  ${dropdownItems.join('')}
                 </div>
               </div>
             `;
@@ -103,16 +114,18 @@ document.addEventListener('DOMContentLoaded', function () {
               }
             },
             {
-              buttons: [
-                {
-                  text: '<i class="icon-base bx bx-plus icon-sm me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add New Permission</span>',
-                  className: 'add-new btn btn-primary',
-                  attr: {
-                    'data-bs-toggle': 'modal',
-                    'data-bs-target': '#addPermissionModal'
-                  }
-                }
-              ]
+              buttons: window.canCreatePermission
+                ? [
+                    {
+                      text: '<i class="icon-base bx bx-plus icon-sm me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add New Permission</span>',
+                      className: 'add-new btn btn-primary',
+                      attr: {
+                        'data-bs-toggle': 'modal',
+                        'data-bs-target': '#addPermissionModal'
+                      }
+                    }
+                  ]
+                : []
             }
           ]
         },
@@ -304,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = addPermissionForm;
     const formData = new FormData(form);
     const data = {
-      permissionName: formData.get('permissionName'),
+      permissionName: formData.get('permissionName')
       // corePermission: formData.get('corePermission') ? true : false,
     };
 

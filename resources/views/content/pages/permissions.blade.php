@@ -16,6 +16,11 @@
 
 @section('content')
   <h4 class="mb-1">Permissions List</h4>
+  <script>
+    window.canCreatePermission = @json(auth()->check() ? auth()->user()->can('create permission') : false);
+    window.canUpdatePermission = @json(auth()->check() ? auth()->user()->can('update permission') : false);
+    window.canDeletePermission = @json(auth()->check() ? auth()->user()->can('delete permission') : false);
+  </script>
 
   <p class="mb-6">Each permission controls access to specific actions within the application.</p>
   <!-- Permission cards -->
@@ -42,12 +47,16 @@
                         <td>{{ $permission->name }}</td>
                         <td>{{ $permission->guard_name }}</td>
                         <td>
+                            @can('update permission')
                             <a href="#" class="btn btn-sm btn-primary">Edit</a>
+                            @endcan
+                            @can('delete permission')
                             <form action="#" method="POST" style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                             </form>
+                            @endcan
                         </td>
                     </tr>
                 @endforeach
@@ -61,6 +70,8 @@
   <!--/ Permission cards -->
 
   <!-- Add Permission Modal -->
+  @can('create permission')
   @include('_partials/_modals/modal-add-permission')
+  @endcan
   <!-- / Add Permission Modal -->
 @endsection

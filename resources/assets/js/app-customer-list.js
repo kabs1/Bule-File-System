@@ -1,10 +1,9 @@
 /**
- * Page User List
+ * Page Customer List
  */
 
 'use strict';
 
-// Datatable (js)
 document.addEventListener('DOMContentLoaded', function (e) {
   let borderColor, bodyBg, headingColor;
 
@@ -15,38 +14,28 @@ document.addEventListener('DOMContentLoaded', function (e) {
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
   // Variable declaration for table
-  const dt_user_table = document.querySelector('.datatables-users'),
-    userView = baseUrl + 'app/user/view/account',
-    statusObj = {
-      1: { title: 'Pending', class: 'bg-label-warning' },
-      2: { title: 'Active', class: 'bg-label-success' },
-      3: { title: 'Inactive', class: 'bg-label-secondary' }
-    };
-  var select2 = $('.select2');
-  let offcanvasAddUser = null; // Declare offcanvasAddUser in a broader scope
-  let dt_user = null; // Declare dt_user in a broader scope
+  const dtCustomerTable = document.querySelector('.datatables-customers');
+  let offcanvasAddCustomer = null; // Declare offcanvasAddCustomer in a broader scope
+  let dt_customer = null; // Declare dt_customer in a broader scope
 
-  if (select2.length) {
-    var $this = select2;
-    $this.wrap('<div class="position-relative"></div>').select2({
-      placeholder: 'Select Country',
-      dropdownParent: $this.parent()
-    });
-  }
+  // Customers datatable
+  if (dtCustomerTable) {
+    const offcanvasAddCustomerEl = document.getElementById('offcanvasAddCustomer');
+    offcanvasAddCustomer = offcanvasAddCustomerEl ? new window.bootstrap.Offcanvas(offcanvasAddCustomerEl) : null; // Initialize here
 
-  // Users datatable
-  if (dt_user_table) {
-    const offcanvasAddUserEl = document.getElementById('offcanvasAddUser');
-    offcanvasAddUser = offcanvasAddUserEl ? new window.bootstrap.Offcanvas(offcanvasAddUserEl) : null; // Initialize here
-
-    dt_user = new DataTable(dt_user_table, {
-      ajax: '/app/users/list',
+    dt_customer = new DataTable(dtCustomerTable, {
+      ajax: {
+        url: '/app/customers/list',
+        headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        dataSrc: 'data'
+      },
       columns: [
         // columns according to JSON
         { data: 'id' },
         { data: 'id', orderable: false, render: DataTable.render.select() },
         { data: 'full_name' },
-        { data: 'role' },
+        { data: 'email' },
+        { data: 'contact' },
         { data: 'status' },
         { data: 'created_by' },
         { data: 'branch' },
@@ -105,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
             // Creates full output for row
             var row_output =
-              '<div class="d-flex justify-content-start align-items-center user-name">' +
+              '<div class="d-flex justify-content-start align-items-center customer-name">' +
               '<div class="avatar-wrapper">' +
               '<div class="avatar avatar-sm me-4">' +
               output +
@@ -113,8 +102,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
               '</div>' +
               '<div class="d-flex flex-column">' +
               '<a href="' +
-              userView +
-              '" class="text-heading text-truncate"><span class="fw-medium">' +
+              baseUrl +
+              'app/customer/view/overview" class="text-heading text-truncate"><span class="fw-medium">' +
               name +
               '</span></a>' +
               '<small>' +
@@ -126,30 +115,23 @@ document.addEventListener('DOMContentLoaded', function (e) {
           }
         },
         {
-          targets: 3,
+          // Customer Contact
+          targets: 4,
           render: function (data, type, full, meta) {
-            var role = full['role'];
-            var roleBadgeObj = {
-              Subscriber: '<i class="icon-base bx bx-crown text-primary me-2"></i>',
-              Author: '<i class="icon-base bx bx-edit text-warning me-2"></i>',
-              Maintainer: '<i class="icon-base bx bx-user text-success me-2"></i>',
-              Editor: '<i class="icon-base bx bx-pie-chart-alt text-info me-2"></i>',
-              Admin: '<i class="icon-base bx bx-desktop text-danger me-2"></i>'
-            };
-            return (
-              "<span class='text-truncate d-flex align-items-center text-heading'>" +
-              (roleBadgeObj[role] || '') + // Ensures badge exists for the role
-              role +
-              '</span>'
-            );
+            var contact = full['contact'];
+            return `<span class="text-heading">${contact}</span>`;
           }
         },
         {
-          // User Status
-          targets: 4,
+          // Customer Status
+          targets: 5,
           render: function (data, type, full, meta) {
             const status = full['status'];
-
+            const statusObj = {
+              1: { title: 'Pending', class: 'bg-label-warning' },
+              2: { title: 'Active', class: 'bg-label-success' },
+              3: { title: 'Inactive', class: 'bg-label-secondary' }
+            };
             return (
               '<span class="badge ' +
               statusObj[status].class +
@@ -160,13 +142,13 @@ document.addEventListener('DOMContentLoaded', function (e) {
           }
         },
         {
-          targets: 5, // New column for 'Created By'
+          targets: 6, // New column for 'Created By'
           render: function (data, type, full, meta) {
             return `<span class="text-heading">${full['created_by']}</span>`;
           }
         },
         {
-          targets: 6, // New column for 'Branch'
+          targets: 7, // New column for 'Branch'
           render: function (data, type, full, meta) {
             return `<span class="text-heading">${full['branch']}</span>`;
           }
@@ -182,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 <a href="javascript:;" class="btn btn-icon delete-record" data-id="${full.id}">
                   <i class="icon-base bx bx-trash icon-md"></i>
                 </a>
-                <a href="${userView}" class="btn btn-icon">
+                <a href="${baseUrl}app/customer/view/overview" class="btn btn-icon">
                   <i class="icon-base bx bx-show icon-md"></i>
                 </a>
                 <a href="javascript:;" class="btn btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
@@ -226,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           features: [
             {
               search: {
-                placeholder: 'Search User',
+                placeholder: 'Search Customer',
                 text: '_INPUT_'
               }
             },
@@ -242,14 +224,14 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       text: `<span class="d-flex align-items-center"><i class="icon-base bx bx-printer me-2"></i>Print</span>`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6],
+                        columns: [2, 3, 4, 5, 6, 7],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
                             const el = new DOMParser().parseFromString(inner, 'text/html').body.childNodes;
                             let result = '';
                             el.forEach(item => {
-                              if (item.classList && item.classList.contains('user-name')) {
+                              if (item.classList && item.classList.contains('customer-name')) {
                                 result += item.lastChild.firstChild.textContent;
                               } else {
                                 result += item.textContent || item.innerText || '';
@@ -275,14 +257,14 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       text: `<span class="d-flex align-items-center"><i class="icon-base bx bx-file me-2"></i>Csv</span>`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6],
+                        columns: [2, 3, 4, 5, 6, 7],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
                             const el = new DOMParser().parseFromString(inner, 'text/html').body.childNodes;
                             let result = '';
                             el.forEach(item => {
-                              if (item.classList && item.classList.contains('user-name')) {
+                              if (item.classList && item.classList.contains('customer-name')) {
                                 result += item.lastChild.firstChild.textContent;
                               } else {
                                 result += item.textContent || item.innerText || '';
@@ -298,14 +280,14 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       text: `<span class="d-flex align-items-center"><i class="icon-base bx bxs-file-export me-2"></i>Excel</span>`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6],
+                        columns: [2, 3, 4, 5, 6, 7],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
                             const el = new DOMParser().parseFromString(inner, 'text/html').body.childNodes;
                             let result = '';
                             el.forEach(item => {
-                              if (item.classList && item.classList.contains('user-name')) {
+                              if (item.classList && item.classList.contains('customer-name')) {
                                 result += item.lastChild.firstChild.textContent;
                               } else {
                                 result += item.textContent || item.innerText || '';
@@ -321,14 +303,14 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       text: `<span class="d-flex align-items-center"><i class="icon-base bx bxs-file-pdf me-2"></i>Pdf</span>`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6],
+                        columns: [2, 3, 4, 5, 6, 7],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
                             const el = new DOMParser().parseFromString(inner, 'text/html').body.childNodes;
                             let result = '';
                             el.forEach(item => {
-                              if (item.classList && item.classList.contains('user-name')) {
+                              if (item.classList && item.classList.contains('customer-name')) {
                                 result += item.lastChild.firstChild.textContent;
                               } else {
                                 result += item.textContent || item.innerText || '';
@@ -344,14 +326,14 @@ document.addEventListener('DOMContentLoaded', function (e) {
                       text: `<i class="icon-base bx bx-copy me-1"></i>Copy`,
                       className: 'dropdown-item',
                       exportOptions: {
-                        columns: [3, 4, 5, 6],
+                        columns: [2, 3, 4, 5, 6, 7],
                         format: {
                           body: function (inner, coldex, rowdex) {
                             if (inner.length <= 0) return inner;
                             const el = new DOMParser().parseFromString(inner, 'text/html').body.childNodes;
                             let result = '';
                             el.forEach(item => {
-                              if (item.classList && item.classList.contains('user-name')) {
+                              if (item.classList && item.classList.contains('customer-name')) {
                                 result += item.lastChild.firstChild.textContent;
                               } else {
                                 result += item.textContent || item.innerText || '';
@@ -365,11 +347,11 @@ document.addEventListener('DOMContentLoaded', function (e) {
                   ]
                 },
                 {
-                  text: '<i class="icon-base bx bx-plus icon-sm me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add New User</span>',
+                  text: '<i class="icon-base bx bx-plus icon-sm me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add New Customer</span>',
                   className: 'add-new btn btn-primary',
                   attr: {
                     'data-bs-toggle': 'offcanvas',
-                    'data-bs-target': '#offcanvasAddUser'
+                    'data-bs-target': '#offcanvasAddCustomer'
                   }
                 }
               ]
@@ -382,16 +364,15 @@ document.addEventListener('DOMContentLoaded', function (e) {
         },
         bottomEnd: 'paging'
       },
-      // Add event listener for the "Add New User" button to reset the form
+      // Add event listener for the "Add New Customer" button to reset the form
       initComplete: function () {
         const addNewButton = document.querySelector('.add-new');
         if (addNewButton) {
           addNewButton.addEventListener('click', () => {
-            $('#offcanvasAddUserLabel').text('Add User'); // Reset title
-            $('#addNewUserForm').removeAttr('data-user-id'); // Clear user ID
-            $('#addNewUserForm')[0].reset(); // Reset form fields
-            $('#user-role').val('').trigger('change'); // Reset role select2
-            $('#user-branch').val('').trigger('change'); // Reset branch select2
+            $('#offcanvasAddCustomerLabel').text('Add Customer'); // Reset title
+            $('#addNewCustomerForm').removeAttr('data-customer-id'); // Clear customer ID
+            $('#addNewCustomerForm')[0].reset(); // Reset form fields
+            $('#customer-branch').val('').trigger('change'); // Reset branch select2
             fv.resetForm(true); // Reset form validation
           });
         }
@@ -432,30 +413,32 @@ document.addEventListener('DOMContentLoaded', function (e) {
           $(select).trigger('change'); // Trigger change to update select2 display
         };
 
-        // Role filter
-        createFilter(3, '.user_role', 'UserRole', 'Select Role');
-
         // Status filter
         const statusFilter = document.createElement('select');
-        statusFilter.id = 'FilterTransaction';
+        statusFilter.id = 'FilterCustomerStatus';
         statusFilter.className = 'form-select text-capitalize';
         statusFilter.innerHTML = '<option value="">Select Status</option>';
-        const userStatusContainer = document.querySelector('.user_status');
-        if (userStatusContainer) {
-          userStatusContainer.appendChild(statusFilter);
+        const customerStatusContainer = document.querySelector('.customer_status');
+        if (customerStatusContainer) {
+          customerStatusContainer.appendChild(statusFilter);
           $(statusFilter).wrap('<div class="position-relative"></div>').select2({
             placeholder: 'Select Status',
             dropdownParent: $(statusFilter).parent()
           });
           $(statusFilter).on('change', () => {
             const val = $(statusFilter).val() ? `^${$(statusFilter).val()}$` : '';
-            api.column(4).search(val, true, false).draw();
+            api.column(5).search(val, true, false).draw();
           });
         } else {
-          console.error('Filter container .user_status not found.');
+          console.error('Filter container .customer_status not found.');
         }
 
-        const statusColumn = api.column(4);
+        const statusColumn = api.column(5);
+        const statusObj = {
+          1: { title: 'Pending', class: 'bg-label-warning' },
+          2: { title: 'Active', class: 'bg-label-success' },
+          3: { title: 'Inactive', class: 'bg-label-secondary' }
+        };
         const uniqueStatusData = Array.from(new Set(statusColumn.data().toArray())).sort();
         uniqueStatusData.forEach(d => {
           const option = new Option(statusObj[d]?.title || d, statusObj[d]?.title || d, false, false);
@@ -464,15 +447,15 @@ document.addEventListener('DOMContentLoaded', function (e) {
         $(statusFilter).trigger('change');
 
         // Created By filter
-        createFilter(5, '.user_created_by', 'UserCreatedBy', 'Select Creator');
+        createFilter(6, '.customer_created_by', 'CustomerCreatedBy', 'Select Creator');
 
         // Branch filter
-        createFilter(6, '.user_branch', 'UserBranch', 'Select Branch');
+        createFilter(7, '.customer_branch', 'CustomerBranch', 'Select Branch');
       },
       language: {
         sLengthMenu: '_MENU_',
         search: '',
-        searchPlaceholder: 'Search User',
+        searchPlaceholder: 'Search Customer',
         paginate: {
           next: '<i class="icon-base bx bx-chevron-right scaleX-n1-rtl icon-18px"></i>',
           previous: '<i class="icon-base bx bx-chevron-left scaleX-n1-rtl icon-18px"></i>',
@@ -526,15 +509,15 @@ document.addEventListener('DOMContentLoaded', function (e) {
         row = event.target.parentElement.closest('tr');
       }
       if (row) {
-        dt_user.row(row).remove().draw();
+        dt_customer.row(row).remove().draw();
       }
     }
 
     function bindDeleteEvent() {
-      const userListTable = document.querySelector('.datatables-users');
+      const customerListTable = document.querySelector('.datatables-customers');
       const modal = document.querySelector('.dtr-bs-modal');
 
-      if (userListTable && userListTable.classList.contains('collapsed')) {
+      if (customerListTable && customerListTable.classList.contains('collapsed')) {
         if (modal) {
           modal.addEventListener('click', function (event) {
             if (event.target.parentElement.classList.contains('delete-record')) {
@@ -545,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           });
         }
       } else {
-        const tableBody = userListTable?.querySelector('tbody');
+        const tableBody = customerListTable?.querySelector('tbody');
         if (tableBody) {
           tableBody.addEventListener('click', function (event) {
             if (event.target.parentElement.classList.contains('delete-record')) {
@@ -576,7 +559,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
   }
 
   // Filter form control to default size
-  // ? setTimeout used for user-list table initialization
+  // ? setTimeout used for customer-list table initialization
   setTimeout(() => {
     const elementsToModify = [
       { selector: '.dt-buttons .btn', classToRemove: 'btn-secondary' },
@@ -610,7 +593,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   // Validation & Phone mask
   const phoneMaskList = document.querySelectorAll('.phone-mask'),
-    addNewUserForm = document.getElementById('addNewUserForm');
+    addNewCustomerForm = document.getElementById('addNewCustomerForm');
 
   // Phone Number
   if (phoneMaskList) {
@@ -628,24 +611,24 @@ document.addEventListener('DOMContentLoaded', function (e) {
       });
     });
   }
-  // Add New User Form Validation
-  const fv = FormValidation.formValidation(addNewUserForm, {
+  // Add New Customer Form Validation
+  const fv = FormValidation.formValidation(addNewCustomerForm, {
     fields: {
-      userFirstName: {
+      customerFirstName: {
         validators: {
           notEmpty: {
             message: 'Please enter first name'
           }
         }
       },
-      userLastName: {
+      customerLastName: {
         validators: {
           notEmpty: {
             message: 'Please enter last name'
           }
         }
       },
-      userEmail: {
+      customerEmail: {
         validators: {
           notEmpty: {
             message: 'Please enter your email'
@@ -655,21 +638,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
           }
         }
       },
-      password: {
+      customerContact: {
         validators: {
           notEmpty: {
-            message: 'Please enter password'
-          },
-          stringLength: {
-            min: 8,
-            message: 'The password must be at least 8 characters long'
-          }
-        }
-      },
-      userRole: {
-        validators: {
-          notEmpty: {
-            message: 'Please select a role'
+            message: 'Please enter your contact'
           }
         }
       },
@@ -696,24 +668,19 @@ document.addEventListener('DOMContentLoaded', function (e) {
     }
   }).on('core.form.valid', function () {
     // When the form is submitted and all fields are valid
-    const form = addNewUserForm;
+    const form = addNewCustomerForm;
     const formData = new FormData(form);
     const data = {
-      first_name: formData.get('userFirstName'),
-      last_name: formData.get('userLastName'),
-      email: formData.get('userEmail'),
-      role: formData.get('userRole'),
+      first_name: formData.get('customerFirstName'),
+      last_name: formData.get('customerLastName'),
+      email: formData.get('customerEmail'),
+      contact: formData.get('customerContact'),
       branch_id: formData.get('branchId'),
     };
 
-    const userId = form.dataset.userId;
-    const method = userId ? 'PUT' : 'POST';
-    const url = userId ? `/app/users/${userId}` : '/app/users';
-
-    // Only include password if it's a new user or password field is not empty
-    if (!userId || formData.get('password')) {
-      data.password = formData.get('password');
-    }
+    const customerId = form.dataset.customerId;
+    const method = customerId ? 'PUT' : 'POST';
+    const url = customerId ? `/app/customers/${customerId}` : '/app/customers';
 
     fetch(url, {
       method: method,
@@ -735,13 +702,29 @@ document.addEventListener('DOMContentLoaded', function (e) {
       })
       .then(result => {
         if (result.message) {
-          alert(result.message);
-          dt_user.ajax.reload();
-          if (offcanvasAddUser) offcanvasAddUser.hide();
+          if (window.toastr) {
+            toastr.success(result.message, 'Success!', {
+              closeButton: true,
+              tapToDismiss: false,
+              rtl: $('html').attr('dir') === 'rtl'
+            });
+          } else {
+            alert(result.message);
+          }
+          dt_customer.ajax.reload();
+          if (offcanvasAddCustomer) offcanvasAddCustomer.hide();
         } else if (result.errors) {
           for (const field in result.errors) {
             if (result.errors.hasOwnProperty(field)) {
-              alert(result.errors[field][0]);
+              if (window.toastr) {
+                toastr.error(result.errors[field][0], 'Error!', {
+                  closeButton: true,
+                  tapToDismiss: false,
+                  rtl: $('html').attr('dir') === 'rtl'
+                });
+              } else {
+                alert('Error: ' + result.errors[field][0]);
+              }
             }
           }
         }
@@ -749,40 +732,57 @@ document.addEventListener('DOMContentLoaded', function (e) {
       .catch(error => {
         console.error('Fetch Error:', error);
         if (error.message.includes('Unexpected token') || error.message.includes('non-JSON response')) {
-          alert(
-            'An unexpected server response occurred. This might be due to an expired session. Please log in again.'
-          );
+          if (window.toastr) {
+            toastr.error(
+              'An unexpected server response occurred. This might be due to an expired session. Please log in again.',
+              'Error!',
+              {
+                closeButton: true,
+                tapToDismiss: false,
+                rtl: $('html').attr('dir') === 'rtl'
+              }
+            );
+          } else {
+            alert('An unexpected server response occurred. This might be due to an expired session. Please log in again.');
+          }
         } else {
-          alert('An error occurred while saving the user. Check console for details.');
+          if (window.toastr) {
+            toastr.error('An error occurred while saving the customer. Check console for details.', 'Error!', {
+              closeButton: true,
+              tapToDismiss: false,
+              rtl: $('html').attr('dir') === 'rtl'
+            });
+          } else {
+            alert('An error occurred while saving the customer. Check console for details.');
+          }
         }
       });
   });
 
-  // Edit user functionality
+  // Edit customer functionality
   $(document).on('click', '.edit-record', function () {
-    const userId = $(this).data('id');
-    fetch(`/app/users/${userId}`) // Corrected URL to use the show method
+    const customerId = $(this).data('id');
+    fetch(`/app/customers/${customerId}`) // Corrected URL to use the show method
       .then(response => response.json())
-      .then(user => {
-        $('#offcanvasAddUserLabel').text('Edit User');
-        $('#addNewUserForm').attr('data-user-id', user.id);
-        $('#add-user-firstname').val(user.first_name || ''); // Assuming input field for first name
-        $('#add-user-lastname').val(user.last_name || ''); // Assuming input field for last name
-        $('#add-user-email').val(user.email || '');
-        if (user.role) $('#user-role').val(user.role).trigger('change'); // Directly use user.role
-        if (user.branch_id) $('#user-branch').val(user.branch_id).trigger('change');
-        // Populate other fields as needed
+      .then(customer => {
+        $('#offcanvasAddCustomerLabel').text('Edit Customer');
+        $('#addNewCustomerForm').attr('data-customer-id', customer.id);
+        $('#add-customer-firstname').val(customer.first_name || '');
+        $('#add-customer-lastname').val(customer.last_name || '');
+        $('#add-customer-email').val(customer.email || '');
+        $('#add-customer-contact').val(customer.contact || '');
+        if (customer.branch_id) $('#customer-branch').val(customer.branch_id).trigger('change');
 
-        if (offcanvasAddUser) offcanvasAddUser.show(); // Use the initialized instance
+        if (offcanvasAddCustomer) offcanvasAddCustomer.show();
         else console.error('Bootstrap Offcanvas not available or element not found.');
       })
-      .catch(error => console.error('Error fetching user for edit:', error));
+      .catch(error => console.error('Error fetching customer for edit:', error));
   });
 
-  // Suspend user
+  // Suspend customer
   $(document).on('click', '.suspend-record', function () {
-    const userId = $(this).data('id');
-    fetch(`/app/users/${userId}/suspend`, {
+    const customerId = $(this).data('id');
+    fetch(`/app/customers/${customerId}/suspend`, {
       method: 'PUT',
       headers: {
         'X-CSRF-TOKEN': csrfToken
@@ -791,17 +791,25 @@ document.addEventListener('DOMContentLoaded', function (e) {
       .then(response => response.json())
       .then(result => {
         if (result.message) {
-          alert(result.message);
-          dt_user.ajax.reload();
+          if (window.toastr) {
+            toastr.success(result.message, 'Success!', {
+              closeButton: true,
+              tapToDismiss: false,
+              rtl: $('html').attr('dir') === 'rtl'
+            });
+          } else {
+            alert(result.message);
+          }
+          dt_customer.ajax.reload();
         }
       })
-      .catch(error => console.error('Error suspending user:', error));
+      .catch(error => console.error('Error suspending customer:', error));
   });
 
-  // Activate user
+  // Activate customer
   $(document).on('click', '.activate-record', function () {
-    const userId = $(this).data('id');
-    fetch(`/app/users/${userId}/activate`, {
+    const customerId = $(this).data('id');
+    fetch(`/app/customers/${customerId}/activate`, {
       method: 'PUT',
       headers: {
         'X-CSRF-TOKEN': csrfToken
@@ -810,18 +818,26 @@ document.addEventListener('DOMContentLoaded', function (e) {
       .then(response => response.json())
       .then(result => {
         if (result.message) {
-          alert(result.message);
-          dt_user.ajax.reload();
+          if (window.toastr) {
+            toastr.success(result.message, 'Success!', {
+              closeButton: true,
+              tapToDismiss: false,
+              rtl: $('html').attr('dir') === 'rtl'
+            });
+          } else {
+            alert(result.message);
+          }
+          dt_customer.ajax.reload();
         }
       })
-      .catch(error => console.error('Error activating user:', error));
+      .catch(error => console.error('Error activating customer:', error));
   });
 
-  // Delete user functionality
+  // Delete customer functionality
   $(document).on('click', '.delete-record', function () {
-    const userId = $(this).data('id');
-    if (confirm('Are you sure you want to delete this user?')) {
-      fetch(`/app/users/${userId}`, {
+    const customerId = $(this).data('id');
+    if (confirm('Are you sure you want to delete this customer?')) {
+      fetch(`/app/customers/${customerId}`, {
         method: 'DELETE',
         headers: {
           'X-CSRF-TOKEN': csrfToken
@@ -830,11 +846,19 @@ document.addEventListener('DOMContentLoaded', function (e) {
         .then(response => response.json())
         .then(result => {
           if (result.message) {
-            alert(result.message);
-            dt_user.ajax.reload();
+            if (window.toastr) {
+              toastr.success(result.message, 'Success!', {
+                closeButton: true,
+                tapToDismiss: false,
+                rtl: $('html').attr('dir') === 'rtl'
+              });
+            } else {
+              alert(result.message);
+            }
+            dt_customer.ajax.reload();
           }
         })
-        .catch(error => console.error('Error deleting user:', error));
+        .catch(error => console.error('Error deleting customer:', error));
     }
   });
 });

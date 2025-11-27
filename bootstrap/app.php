@@ -33,9 +33,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->api([
-            EnsureFrontendRequestsAreStateful::class,
+            // EnsureFrontendRequestsAreStateful::class, // Often used for SPAs with cookie-based auth. Keep if needed.
             'throttle:api',
-            SubstituteBindings::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
 
         $middleware->alias([
@@ -44,5 +44,16 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->dontReport([
+            //
+        ]);
+
+        $exceptions->renderable(function (Throwable $e, $request) {
+            if ($request->is('api/*')) {
+                // This will handle exceptions for API routes and return JSON
+                return response()->json(['message' => $e->getMessage()], $e instanceof \Illuminate\Validation\ValidationException ? 422 : 500);
+            } elseif ($request->expectsJson() && $e instanceof \Illuminate\Auth\AuthenticationException) {
+                return response()->json(['message' => 'Unauthenticated.'], 401);
+            }
+        });
     })->create();

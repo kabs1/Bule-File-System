@@ -14,6 +14,7 @@
             <label class="form-label" for="modalRoleName">Role Name</label>
             <input type="text" id="modalRoleName" name="roleName" class="form-control"
               placeholder="Enter a role name" tabindex="-1" />
+            <div class="invalid-feedback" id="modalRoleNameFeedback"></div>
           </div>
           <div class="col-12">
             <h5 class="mb-6">Role Permissions</h5>
