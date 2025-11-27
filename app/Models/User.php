@@ -27,6 +27,8 @@ class User extends Authenticatable
     use TwoFactorAuthenticatable;
     use LogsActivity;
 
+    protected string $guard_name = 'web';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -47,6 +49,7 @@ class User extends Authenticatable
         'status',
         'created_by_user_id',
         'branch_id',
+        'role_id',
     ];
 
     /**
@@ -96,7 +99,20 @@ class User extends Authenticatable
      */
     public function branch(): BelongsTo
     {
-        return $this->belongsTo(Branch::class);
+        return $this->belongsTo(Branch::class, 'branch_id', 'branch_id');
+    }
+
+    /**
+     * Get the role that the user belongs to.
+     */
+    public function userRole(): BelongsTo
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'id');
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'user_id';
     }
 
     public function getActivitylogOptions(): LogOptions

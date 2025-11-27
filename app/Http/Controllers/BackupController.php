@@ -88,10 +88,17 @@ public function list(Request $request)
         $this->authorize('backup.create');
 
         try {
-            Artisan::call('backup:run');
-            return back()->with('success', 'Backup created successfully!');
+            $output = new \Symfony\Component\Console\Output\BufferedOutput();
+            $exitCode = Artisan::call('backup:run', [], $output);
+            $content = $output->fetch();
+
+            if ($exitCode === 0) {
+                return response()->json(['message' => 'Backup created successfully!', 'output' => $content]);
+            } else {
+                return response()->json(['error' => 'Failed to create backup: ' . $content], 500);
+            }
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to create backup: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to create backup: ' . $e->getMessage()], 500);
         }
     }
 
@@ -99,8 +106,15 @@ public function list(Request $request)
     {
         $this->authorize('backup.download');
 
-    $backupDestination = BackupDestinationFactory::createFromDiskName($disk);
-    $backup = $backupDestination->backups()->first(fn ($backup) => $backup->path() === $path);
+    $config = Config::fromArray(config('backup'));
+    $backupDestination = collect(BackupDestinationFactory::createFromArray($config))
+        ->first(fn ($destination) => $destination->diskName() === $disk);
+
+    if (!$backupDestination) {
+        abort(404, 'Backup destination not found.');
+    }
+
+    $backup = $backupDestination->backups()->first(fn ($backup) => $backup->path() === base64_decode($path));
 
     if (!$backup) {
             abort(404, 'Backup not found.');
@@ -113,14 +127,21 @@ public function list(Request $request)
     {
        $this->authorize('backup.delete');
 
-    $backupDestination = BackupDestinationFactory::createFromDiskName($disk);
-    $backup = $backupDestination->backups()->first(fn ($backup) => $backup->path() === $path);
+    $config = Config::fromArray(config('backup'));
+    $backupDestination = collect(BackupDestinationFactory::createFromArray($config))
+        ->first(fn ($destination) => $destination->diskName() === $disk);
+
+    if (!$backupDestination) {
+        abort(404, 'Backup destination not found.');
+    }
+
+    $backup = $backupDestination->backups()->first(fn ($backup) => $backup->path() === base64_decode($path));
         if (!$backup) {
             abort(404, 'Backup not found.');
         }
 
         $backup->delete();
 
-        return back()->with('success', 'Backup deleted successfully!');
+        return response()->json(['message' => 'Backup deleted successfully!']);
     }
 }

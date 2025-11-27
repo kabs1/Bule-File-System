@@ -17,12 +17,12 @@ class UserController extends Controller
         $branches = Branch::all(); // Fetch all branches
 
         $totalUsers = User::count();
-        $roles = Role::all(); // Get all roles from the database
+        $roles = Role::where('guard_name', 'web')->get(); // Explicitly get roles for the 'web' guard
         $roleCounts = [];
         foreach ($roles as $role) {
             // Only count users for roles that actually exist and have users
             $roleCounts[$role->name] = User::whereHas('roles', function ($query) use ($role) {
-                $query->where('name', $role->name);
+                $query->where('name', $role->name)->where('guard_name', $role->guard_name);
             })->count();
         }
 
@@ -31,11 +31,11 @@ class UserController extends Controller
 
     public function list(Request $request)
     {
-        $users = User::with(['roles', 'creator', 'branch'])->get();
+        $users = User::with(['roles', 'creator', 'branch', 'userRole'])->get(); // Eager load the 'userRole' relationship
         $data = [];
         foreach ($users as $user) {
             $fullName = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? ''));
-            $roleName = $user->roles->pluck('name')->first() ?? '';
+            $roleName = $user->userRole ? $user->userRole->name : ($user->roles->pluck('name')->first() ?? ''); // Use the 'userRole' relationship for display
             $data[] = [
                 'id' => $user->user_id,
                 'full_name' => $fullName,
@@ -53,13 +53,13 @@ class UserController extends Controller
 
     public function show(User $user): JsonResponse
     {
-        $user->load(['roles']);
+        $user->load(['roles', 'userRole']); // Load both for flexibility, though 'userRole' is preferred for direct access
         return response()->json([
             'id' => $user->user_id,
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'email' => $user->email,
-            'role' => $user->roles->pluck('name')->first(), // Send single role name
+            'role' => $user->userRole ? $user->userRole->name : ($user->roles->pluck('name')->first() ?? ''), // Use the 'userRole' relationship for display
             'branch_id' => $user->branch_id,
             'status' => $user->status,
         ]);
@@ -75,12 +75,20 @@ class UserController extends Controller
             'role' => [
                 'required',
                 'string',
-                Rule::exists('roles', 'name')->where(function ($query) {
-                    $query->where('guard_name', config('auth.defaults.guard'));
+                Rule::exists('roles', 'name')->where(function ($query) use ($request) {
+                    $query->where('guard_name', config('auth.defaults.guard'))
+                        ->whereRaw('LOWER(name) = ?', [strtolower($request->input('role'))]);
                 }),
             ],
             'branch_id' => 'required|integer|exists:branches,branch_id',
         ]);
+
+        $roleModel = Role::where('guard_name', config('auth.defaults.guard'))
+            ->whereRaw('LOWER(name) = ?', [strtolower($validatedData['role'])])
+            ->first();
+        if (!$roleModel) {
+            return response()->json(['errors' => ['role' => ['Selected role does not exist for this guard.']]], 422);
+        }
 
         $user = User::create([
             'first_name' => $validatedData['first_name'],
@@ -91,10 +99,10 @@ class UserController extends Controller
             'status' => 2, // Assuming 2 = Active
             'created_by_user_id' => auth()->id(),
             'branch_id' => $validatedData['branch_id'],
-            // Do NOT set role_id here. Spatie/permission handles this.
+            'role_id' => $roleModel->id,
         ]);
 
-        $user->assignRole($validatedData['role']);
+        $user->assignRole($roleModel->name); // Assign role by name, ensuring the guard is handled by the model
 
         return response()->json(['message' => 'User created successfully.', 'user' => $user], 201);
     }
@@ -108,21 +116,30 @@ class UserController extends Controller
             'role' => [
                 'required',
                 'string',
-                Rule::exists('roles', 'name')->where(function ($query) {
-                    $query->where('guard_name', config('auth.defaults.guard'));
+                Rule::exists('roles', 'name')->where(function ($query) use ($request) {
+                    $query->where('guard_name', config('auth.defaults.guard'))
+                        ->whereRaw('LOWER(name) = ?', [strtolower($request->input('role'))]);
                 }),
             ],
             'branch_id' => 'required|integer|exists:branches,branch_id',
         ]);
+
+        $roleModel = Role::where('guard_name', config('auth.defaults.guard'))
+            ->whereRaw('LOWER(name) = ?', [strtolower($validatedData['role'])])
+            ->first();
+        if (!$roleModel) {
+            return response()->json(['errors' => ['role' => ['Selected role does not exist for this guard.']]], 422);
+        }
 
         $user->update([
             'first_name' => $validatedData['first_name'],
             'last_name' => $validatedData['last_name'],
             'email' => $validatedData['email'],
             'branch_id' => $validatedData['branch_id'],
+            'role_id' => $roleModel->id,
         ]);
 
-        $user->syncRoles($validatedData['role']);
+        $user->syncRoles([$roleModel->name]); // Sync role by name, ensuring the guard is handled by the model
 
         return response()->json(['message' => 'User updated successfully.']);
     }

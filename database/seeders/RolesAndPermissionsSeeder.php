@@ -19,6 +19,10 @@ class RolesAndPermissionsSeeder extends Seeder
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        // Truncate existing roles and permissions to ensure a clean slate
+        Permission::query()->delete();
+        Role::query()->delete();
+
         // Create permissions
         $permissions = [
             'activity_log.view',

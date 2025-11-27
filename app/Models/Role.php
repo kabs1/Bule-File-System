@@ -12,7 +12,8 @@ class Role extends SpatieRole
     use HasFactory;
     use LogsActivity;
 
-    protected $primaryKey = 'role_id';
+    protected $primaryKey = 'id';
+    protected string $guard_name = 'web';
 
     protected $fillable = [
         'role_name',
