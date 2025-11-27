@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   // Variable declaration for table
   const dt_user_table = document.querySelector('.datatables-users'),
-    userView = baseUrl + 'app/user/view/account',
+    // userView is now dynamically generated
     offCanvasForm = document.getElementById('offcanvasAddUser');
 
   // Select2 initialization
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                   </div>
                 </div>
                 <div class="d-flex flex-column">
-                  <a href="${userView}" class="text-truncate text-heading">
+                  <a href="${baseUrl}app/users/${full.user_id}" class="text-truncate text-heading">
                     <span class="fw-medium">${fullName}</span>
                   </a>
                 </div>
@@ -168,10 +168,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
               `<button class="btn btn-sm btn-icon delete-record" data-id="${full['user_id']}"><i class="icon-base bx bx-trash icon-22px"></i></button>` +
               '<button class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded icon-22px"></i></button>' +
               '<div class="dropdown-menu dropdown-menu-end m-0">' +
-              '<a href="' +
-              userView +
-              '" class="dropdown-item">View</a>' +
-              '<a href="javascript:;" class="dropdown-item">Suspend</a>' +
+              `<a href="${baseUrl}app/users/${full['user_id']}" class="dropdown-item">View</a>` + // Dynamically generate view link
+              `<a href="javascript:;" class="dropdown-item suspend-record" data-id="${full['user_id']}">Suspend</a>` + // Add suspend action
               '</div>' +
               '</div>'
             );

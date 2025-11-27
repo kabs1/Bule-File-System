@@ -12,6 +12,11 @@ class Customer extends Model
 
     protected $primaryKey = 'customer_id';
 
+    public function getRouteKeyName(): string
+    {
+        return 'customer_id';
+    }
+
     protected $fillable = [
         'first_name',
         'last_name',

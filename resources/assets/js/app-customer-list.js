@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 <a href="javascript:;" class="btn btn-icon delete-record" data-id="${full.id}">
                   <i class="icon-base bx bx-trash icon-md"></i>
                 </a>
-                <a href="${baseUrl}app/customer/view/overview" class="btn btn-icon">
+                <a href="${baseUrl}app/customers/${full.id}" class="btn btn-icon">
                   <i class="icon-base bx bx-show icon-md"></i>
                 </a>
                 <a href="javascript:;" class="btn btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
