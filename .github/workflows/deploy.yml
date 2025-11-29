@@ -17,36 +17,36 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2' # Adjust to your Laravel project's PHP version (updated to match composer.json requirement)
-          extensions: mbstring, xml, ctype, iconv, pdo_sqlite, pdo_mysql # Common Laravel extensions
-          tools: composer:v2 # Install Composer v2
+      # - name: Setup PHP
+      #   uses: shivammathur/setup-php@v2
+      #   with:
+      #     php-version: '8.2' # Adjust to your Laravel project's PHP version (updated to match composer.json requirement)
+      #     extensions: mbstring, xml, ctype, iconv, pdo_sqlite, pdo_mysql # Common Laravel extensions
+      #     tools: composer:v2 # Install Composer v2
 
-      - name: Install Composer dependencies
-        run: composer install --no-dev --prefer-dist # Install PHP dependencies
+      # - name: Install Composer dependencies
+      #   run: composer install --no-dev --prefer-dist # Install PHP dependencies
 
-      - name: Setup Node.js (if needed for build)
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18' # Adjust if your project requires a different Node.js version
+      # - name: Setup Node.js (if needed for build)
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '18' # Adjust if your project requires a different Node.js version
 
-      - name: Install Node.js dependencies (if needed for build)
-        run: yarn install --force # Use --force to bypass ERESOLVE dependency conflicts during deployment
+      # - name: Install Node.js dependencies (if needed for build)
+      #   run: yarn install --force # Use --force to bypass ERESOLVE dependency conflicts during deployment
 
       - name: Build project (if needed)
         run: yarn build
 
-      - name: Laravel specific optimizations
-        run: |
-          # Explicitly set environment variables for artisan commands to prevent database connection during optimization
-          APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan optimize:clear
-          APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan config:cache
-          APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan route:cache
-          APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan view:cache
-          APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan event:cache
-          APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan storage:link --force # Ensure storage link is created
+      # - name: Laravel specific optimizations
+      #   run: |
+      #     # Explicitly set environment variables for artisan commands to prevent database connection during optimization
+      #     APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan optimize:clear
+      #     APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan config:cache
+      #     APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan route:cache
+      #     APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan view:cache
+      #     APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan event:cache
+      #     APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan storage:link --force # Ensure storage link is created
 
       - name: Deploy to FTPS
         timeout-minutes: 25 # Re-add a timeout to prevent indefinite hanging for this step
