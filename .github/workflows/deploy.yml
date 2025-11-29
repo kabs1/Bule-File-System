@@ -32,26 +32,24 @@ jobs:
         with:
           node-version: '18' # Adjust if your project requires a different Node.js version
 
-      - name: Install Composer dependencies
-        run: composer install --no-dev --prefer-dist # Install PHP dependencies
-
       - name: Install Node.js dependencies (if needed for build)
         run: yarn install --force # Use --force to bypass ERESOLVE dependency conflicts during deployment
 
       - name: Build project (if needed)
         run: yarn build
 
-      # - name: Laravel specific optimizations
-      #   run: |
-      #     # Explicitly set environment variables for artisan commands to prevent database connection during optimization
-      #     APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan optimize:clear
-      #     APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan config:cache
-      #     APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan route:cache
-      #     APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan view:cache
-      #     APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan event:cache
-      #     APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan storage:link --force # Ensure storage link is created
+      - name: Laravel specific optimizations
+        run: |
+          # Explicitly set environment variables for artisan commands to prevent database connection during optimization
+          APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan optimize:clear
+          APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan config:cache
+          APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan route:cache
+          APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan view:cache
+          APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan event:cache
+          APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan storage:link --force # Ensure storage link is created
 
       - name: Deploy to FTPS
+        timeout-minutes: 25 # Re-add a timeout to prevent indefinite hanging for this step
         uses: SamKirkland/FTP-Deploy-Action@v4.3.0
         with:
           server: ${{ secrets.FTP_SERVER }}
