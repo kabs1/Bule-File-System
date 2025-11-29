@@ -16,12 +16,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1' # Adjust to your Laravel project's PHP version
+          extensions: mbstring, xml, ctype, iconv, pdo_sqlite, pdo_mysql # Common Laravel extensions
+          tools: composer:v2 # Install Composer v2
+
       - name: Setup Node.js (if needed for build)
         uses: actions/setup-node@v4
         with:
           node-version: '18' # Adjust if your project requires a different Node.js version
 
-      - name: Install dependencies (if needed for build)
+      - name: Install Composer dependencies
+        run: composer install --no-dev --prefer-dist # Install PHP dependencies
+
+      - name: Install Node.js dependencies (if needed for build)
         run: yarn install --force # Use --force to bypass ERESOLVE dependency conflicts during deployment
 
       - name: Build project (if needed)
