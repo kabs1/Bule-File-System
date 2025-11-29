@@ -19,7 +19,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1' # Adjust to your Laravel project's PHP version
+          php-version: '8.2' # Adjust to your Laravel project's PHP version (updated to match composer.json requirement)
           extensions: mbstring, xml, ctype, iconv, pdo_sqlite, pdo_mysql # Common Laravel extensions
           tools: composer:v2 # Install Composer v2
 
