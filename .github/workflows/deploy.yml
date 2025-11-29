@@ -22,10 +22,10 @@ jobs:
           node-version: '18' # Adjust if your project requires a different Node.js version
 
       - name: Install dependencies (if needed for build)
-        run: npm install # Or yarn install, composer install, etc.
+        run: yarn install # Or composer install, etc.
 
       - name: Build project (if needed)
-        run: npm run build # Or yarn build, php artisan optimize, etc.
+        run: yarn build # Or php artisan optimize, etc.
 
       - name: Deploy to FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.3.0
@@ -36,8 +36,6 @@ jobs:
           port: 21 # Common FTPS port, adjust if different (e.g., 990 for implicit FTPS)
           protocol: ftps # Use 'ftps' for FTPS, 'ftp' for FTP
           local-dir: './' # The local directory to deploy from (e.g., './public' for Laravel)
-          remote-directory: '/' # The remote directory on your FTPS server
-          # For incremental deployment, you might need to manage a .ftp_deploy_sync_state file
-          # or use a different action that supports diffing.
-          # This action by default only uploads changed files if a .ftp_deploy_sync_state file exists.
+          server-dir: '/' # The remote directory on your FTPS server (root of FTP)
+          # For incremental deployment, this action by default only uploads changed files if a .ftp_deploy_sync_state file exists.
           # To force a full deployment, you can delete the .ftp_deploy_sync_state file before this step.
