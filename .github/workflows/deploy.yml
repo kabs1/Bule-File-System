@@ -12,6 +12,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 25 # Set a job-level timeout to prevent indefinite hanging
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,6 +23,9 @@ jobs:
           php-version: '8.2' # Adjust to your Laravel project's PHP version (updated to match composer.json requirement)
           extensions: mbstring, xml, ctype, iconv, pdo_sqlite, pdo_mysql # Common Laravel extensions
           tools: composer:v2 # Install Composer v2
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --prefer-dist # Install PHP dependencies
 
       - name: Setup Node.js (if needed for build)
         uses: actions/setup-node@v4
@@ -48,7 +52,6 @@ jobs:
       #     APP_ENV=production CACHE_DRIVER=file DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan storage:link --force # Ensure storage link is created
 
       - name: Deploy to FTPS
-        timeout-minutes: 10 # Add a timeout to prevent indefinite hanging
         uses: SamKirkland/FTP-Deploy-Action@v4.3.0
         with:
           server: ${{ secrets.FTP_SERVER }}
