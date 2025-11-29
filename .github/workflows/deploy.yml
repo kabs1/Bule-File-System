@@ -42,6 +42,8 @@ jobs:
           # Set environment variables to prevent database connection during optimization
           echo "APP_ENV=production" >> $GITHUB_ENV
           echo "CACHE_DRIVER=file" >> $GITHUB_ENV # Use file cache to avoid database connection
+          echo "DB_CONNECTION=sqlite" >> $GITHUB_ENV # Use sqlite connection
+          echo "DB_DATABASE=:memory:" >> $GITHUB_ENV # Use in-memory sqlite database
           
           php artisan optimize:clear
           php artisan config:cache
