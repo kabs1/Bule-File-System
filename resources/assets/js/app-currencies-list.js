@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
       { data: 'id' },
       { data: 'id', orderable: false, render: DataTable.render.select() },
       { data: 'name' },
-      { data: 'code' },
       { data: 'symbol' },
       // { data: 'is_default' },
       { data: 'actions' }
@@ -141,8 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       };
 
-      createFilter(3, '.currency_code', 'CurrencyCode', 'Select Code');
-      createFilter(6, '.currency_default', 'CurrencyDefault', 'Select Default');
+      createFilter(5, '.currency_default', 'CurrencyDefault', 'Select Default'); // Adjusted index for 'is_default' if it were active
     }
   });
 
@@ -155,13 +153,6 @@ document.addEventListener('DOMContentLoaded', function () {
           validators: {
             notEmpty: {
               message: 'Please enter currency name'
-            }
-          }
-        },
-        currencyCode: {
-          validators: {
-            notEmpty: {
-              message: 'Please enter currency code'
             }
           }
         },
@@ -190,7 +181,6 @@ document.addEventListener('DOMContentLoaded', function () {
       const formData = new FormData(form);
       const data = {
         name: formData.get('currencyName'),
-        code: formData.get('currencyCode'),
         symbol: formData.get('currencySymbol')
         // is_default: document.getElementById('currency-default').checked ? 1 : 0
       };
@@ -299,7 +289,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('offcanvasAddCurrencyLabel').textContent = 'Edit Currency';
         addCurrencyForm.setAttribute('data-id', c.id);
         document.getElementById('currency-name').value = c.name || '';
-        document.getElementById('currency-code').value = c.code || '';
         document.getElementById('currency-symbol').value = c.symbol || '';
         // document.getElementById('currency-default').checked = !!c.is_default;
         const el = document.getElementById('offcanvasAddCurrency');

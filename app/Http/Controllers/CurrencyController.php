@@ -23,7 +23,6 @@ class CurrencyController extends Controller
             return [
                 'id' => $c->id,
                 'name' => $c->currency_name,
-                'code' => $c->code ?? '',
                 'symbol' => $c->currency_symbol ?? '',
                
                 // 'is_default' => ($c->is_default ?? false) ? 'Yes' : 'No',
@@ -48,7 +47,6 @@ class CurrencyController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|unique:currencies,currency_name',
-            'code' => 'nullable|string|max:3',
             'symbol' => 'required|string|max:5',
             // 'is_default' => 'nullable|boolean',
         ]);
@@ -75,7 +73,6 @@ class CurrencyController extends Controller
             return response()->json([
                 'id' => $currency->id,
                 'name' => $currency->currency_name,
-                'code' => $currency->code ?? '',
                 'symbol' => $currency->currency_symbol ?? '',
                 // 'is_default' => (bool) $currency->is_default,
             ]);
@@ -92,7 +89,6 @@ class CurrencyController extends Controller
             return response()->json([
                 'id' => $currency->id,
                 'name' => $currency->currency_name,
-                'code' => $currency->code ?? '',
                 'symbol' => $currency->currency_symbol ?? '',
                 // 'is_default' => (bool) $currency->is_default,
             ]);
@@ -107,7 +103,6 @@ class CurrencyController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|unique:currencies,currency_name,' . $currency->id,
-            'code' => 'nullable|string|max:3',
             'symbol' => 'required|string|max:5',
             // 'is_default' => 'nullable|boolean',
         ]);

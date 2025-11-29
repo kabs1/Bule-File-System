@@ -44,7 +44,7 @@ class CustomerController extends Controller
         $validatedData = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:customers,email',
+            'email' => 'nullable|string|email|max:255|unique:customers,email', // Made email optional
             'contact' => 'required|string|max:255',
             'branch_id' => 'required|integer|exists:branches,branch_id',
         ]);
@@ -52,7 +52,7 @@ class CustomerController extends Controller
         $customer = Customer::create([
             'first_name' => $validatedData['first_name'],
             'last_name' => $validatedData['last_name'],
-            'email' => $validatedData['email'],
+            'email' => $validatedData['email'] ?? null, // Store null if email is empty
             'contact' => $validatedData['contact'],
             'status' => 2,
             'user_id' => Auth::id(),
@@ -94,7 +94,7 @@ class CustomerController extends Controller
         $validatedData = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('customers', 'email')->ignore($customer->customer_id, 'customer_id')],
+            'email' => ['nullable', 'string', 'email', 'max:255', Rule::unique('customers', 'email')->ignore($customer->customer_id, 'customer_id')], // Made email optional
             'contact' => 'required|string|max:255',
             'branch_id' => 'required|integer|exists:branches,branch_id',
         ]);
@@ -102,7 +102,7 @@ class CustomerController extends Controller
         $customer->update([
             'first_name' => $validatedData['first_name'],
             'last_name' => $validatedData['last_name'],
-            'email' => $validatedData['email'],
+            'email' => $validatedData['email'] ?? null, // Store null if email is empty
             'contact' => $validatedData['contact'],
             'branch_id' => $validatedData['branch_id'],
         ]);

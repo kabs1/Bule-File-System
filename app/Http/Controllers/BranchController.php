@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Branch;
 use Illuminate\Validation\Rule;
+use App\Models\User; // Import the User model
 
 class BranchController extends Controller
 {
@@ -19,7 +20,8 @@ class BranchController extends Controller
                 return [
                     'id' => $b->branch_id,
                     'name' => $b->branch_name,
-                    'location' => $b->description,
+                    'location' => $b->description ?? '', // Convert null to empty string for display
+                    'status' => $b->status, // Add status to the data
                 ];
             });
             return response()->json(['data' => $data]);
@@ -49,7 +51,7 @@ class BranchController extends Controller
             'branch_name' => $request->name,
             'description' => $request->location,
             'user_id' => auth()->id(),
-            'status' => 2,
+            'status' => 1, // Default status to 1 (active)
         ]);
 
         return response()->json(['message' => 'Branch created successfully.']);
@@ -106,5 +108,35 @@ class BranchController extends Controller
     {
         $branch->delete();
         return response()->json(['message' => 'Branch deleted successfully.']);
+    }
+
+    /**
+     * Deactivate the specified branch and its associated users.
+     */
+    public function deactivate(Branch $branch): \Illuminate\Http\JsonResponse
+    {
+        // Deactivate the branch
+        $branch->status = 3; // Assuming 3 is for Inactive/Deactivated
+        $branch->save();
+
+        // Deactivate all users associated with this branch
+        $branch->users()->update(['status' => 3]);
+
+        return response()->json(['message' => 'Branch and associated users deactivated successfully.']);
+    }
+
+    /**
+     * Activate the specified branch and its associated users.
+     */
+    public function activate(Branch $branch): \Illuminate\Http\JsonResponse
+    {
+        // Activate the branch
+        $branch->status = 2; // Assuming 2 is for Active
+        $branch->save();
+
+        // Activate all users associated with this branch
+        $branch->users()->update(['status' => 2]);
+
+        return response()->json(['message' => 'Branch and associated users activated successfully.']);
     }
 }

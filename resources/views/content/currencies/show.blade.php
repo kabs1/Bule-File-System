@@ -18,12 +18,6 @@
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="mb-3">
-                    <strong>Code:</strong>
-                    {{ $currency->code }}
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="mb-3">
                     <strong>Symbol:</strong>
                     {{ $currency->symbol }}
                 </div>

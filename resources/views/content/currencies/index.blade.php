@@ -19,7 +19,6 @@
     <div class="card-header border-bottom">
       <h5 class="card-title mb-0">Currencies</h5>
       <div class="d-flex justify-content-between align-items-center row pt-4 gap-md-0 g-6">
-        <div class="col-md-4 currency_code"></div>
         <div class="col-md-4 currency_default"></div>
       </div>
     </div>
@@ -30,7 +29,6 @@
             <th></th>
             <th></th>
             <th>Name</th>
-            <th>Code</th>
             <th>Symbol</th>
 
             <!-- <th>Default</th> -->
@@ -50,10 +48,6 @@
           <div class="mb-6 form-control-validation">
             <label class="form-label" for="currency-name">Name</label>
             <input type="text" class="form-control" id="currency-name" name="currencyName" />
-          </div>
-          <div class="mb-6 form-control-validation">
-            <label class="form-label" for="currency-code">Code</label>
-            <input type="text" class="form-control" id="currency-code" name="currencyCode" maxlength="3" />
           </div>
           <div class="mb-6 form-control-validation">
             <label class="form-label" for="currency-symbol">Symbol</label>

@@ -6,11 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Relations\HasMany; // Import HasMany
 
 class Branch extends Model
 {
     use LogsActivity;
     use HasFactory;
+
+    /**
+     * Get the users for the branch.
+     */
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class, 'branch_id', 'branch_id');
+    }
 
     protected $primaryKey = 'branch_id';
 

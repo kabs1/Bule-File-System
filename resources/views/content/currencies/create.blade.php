@@ -27,10 +27,6 @@
                 <input type="text" name="name" class="form-control" placeholder="Currency Name" value="{{ old('name') }}">
             </div>
             <div class="mb-3">
-                <label for="code" class="form-label">Code (e.g., USD):</label>
-                <input type="text" name="code" class="form-control" placeholder="Currency Code" maxlength="3" value="{{ old('code') }}">
-            </div>
-            <div class="mb-3">
                 <label for="symbol" class="form-label">Symbol (e.g., $):</label>
                 <input type="text" name="symbol" class="form-control" placeholder="Currency Symbol" maxlength="5" value="{{ old('symbol') }}">
             </div>

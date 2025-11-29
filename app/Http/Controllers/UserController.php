@@ -113,6 +113,7 @@ class UserController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->user_id, 'user_id')],
+            'password' => 'nullable|string|min:8', // Make password optional on update
             'role' => [
                 'required',
                 'string',
@@ -135,6 +136,7 @@ class UserController extends Controller
             'first_name' => $validatedData['first_name'],
             'last_name' => $validatedData['last_name'],
             'email' => $validatedData['email'],
+            'password' => isset($validatedData['password']) ? Hash::make($validatedData['password']) : $user->password, // Update password only if provided
             'branch_id' => $validatedData['branch_id'],
             'role_id' => $roleModel->id,
         ]);

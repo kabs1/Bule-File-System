@@ -657,12 +657,20 @@ document.addEventListener('DOMContentLoaded', function (e) {
       },
       password: {
         validators: {
-          notEmpty: {
-            message: 'Please enter password'
-          },
-          stringLength: {
-            min: 8,
-            message: 'The password must be at least 8 characters long'
+          callback: {
+            message: 'The password must be at least 8 characters long',
+            callback: function (input) {
+              const userId = addNewUserForm.dataset.userId;
+              // If it's an update and password is empty, it's valid
+              if (userId && input.value === '') {
+                return true;
+              }
+              // Otherwise, apply notEmpty and stringLength validation
+              return {
+                valid: input.value !== '' && input.value.length >= 8,
+                message: input.value === '' ? 'Please enter password' : 'The password must be at least 8 characters long'
+              };
+            }
           }
         }
       },

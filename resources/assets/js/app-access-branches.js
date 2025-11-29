@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { data: 'id', orderable: false, render: DataTable.render.select() }, // For checkboxes
         { data: 'name' },
         { data: 'location' },
+        { data: 'status' }, // Add status column
         { data: 'actions' }
       ],
       columnDefs: [
@@ -60,7 +61,28 @@ document.addEventListener('DOMContentLoaded', function () {
         {
           targets: 3,
           render: function (data, type, full, meta) {
-            return `<span class="text-heading">${full['location']}</span>`;
+            // Display empty string if location is null or empty
+            const location = full['location'] === null || full['location'] === '' ? '' : full['location'];
+            return `<span class="text-heading">${location}</span>`;
+          }
+        },
+        {
+          // Branch Status
+          targets: 4,
+          render: function (data, type, full, meta) {
+            const status = full['status'];
+            const statusObj = {
+              1: { title: 'Pending', class: 'bg-label-warning' },
+              2: { title: 'Active', class: 'bg-label-success' },
+              3: { title: 'Inactive', class: 'bg-label-secondary' }
+            };
+            return (
+              '<span class="badge ' +
+              statusObj[status].class +
+              '" text-capitalized>' +
+              statusObj[status].title +
+              '</span>'
+            );
           }
         },
         {
@@ -75,6 +97,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 <a href="javascript:;" class="btn btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded icon-md"></i></a>
                 <div class="dropdown-menu dropdown-menu-end m-0">
                   <a href="javascript:;" class="dropdown-item edit-record" data-id="${full.id}">Edit</a>
+                  ${
+                    full.status === 2
+                      ? '<a href="javascript:;" class="dropdown-item deactivate-record" data-id="' +
+                        full.id +
+                        '">Deactivate</a>'
+                      : '<a href="javascript:;" class="dropdown-item activate-record" data-id="' +
+                        full.id +
+                        '">Activate</a>'
+                  }
                 </div>
               </div>
             `;
@@ -277,9 +308,7 @@ document.addEventListener('DOMContentLoaded', function () {
       },
       branchLocation: {
         validators: {
-          notEmpty: {
-            message: 'Please enter branch location'
-          }
+          // Removed notEmpty validator to allow empty entries
         }
       }
     },
@@ -438,5 +467,51 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       })
       .catch(error => console.error('Error fetching branch:', error));
+  });
+
+  // Deactivate branch functionality
+  $(document).on('click', '.deactivate-record', function () {
+    const branchId = $(this).data('id');
+    if (confirm('Are you sure you want to deactivate this branch and all its associated users?')) {
+      fetch(`/app/branches/${branchId}/deactivate`, {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      })
+        .then(response => response.json())
+        .then(result => {
+          if (result.message) {
+            alert(result.message);
+            dt_Branch.ajax.reload();
+          }
+        })
+        .catch(error => console.error('Error deactivating branch:', error));
+    }
+  });
+
+  // Activate branch functionality
+  $(document).on('click', '.activate-record', function () {
+    const branchId = $(this).data('id');
+    if (confirm('Are you sure you want to activate this branch and all its associated users?')) {
+      fetch(`/app/branches/${branchId}/activate`, {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      })
+        .then(response => response.json())
+        .then(result => {
+          if (result.message) {
+            alert(result.message);
+            dt_Branch.ajax.reload();
+          }
+        })
+        .catch(error => console.error('Error activating branch:', error));
+    }
   });
 });

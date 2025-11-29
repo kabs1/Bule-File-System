@@ -28,10 +28,6 @@
                 <input type="text" name="name" value="{{ $currency->name }}" class="form-control" placeholder="Currency Name">
             </div>
             <div class="mb-3">
-                <label for="code" class="form-label">Code (e.g., USD):</label>
-                <input type="text" name="code" value="{{ $currency->code }}" class="form-control" placeholder="Currency Code" maxlength="3">
-            </div>
-            <div class="mb-3">
                 <label for="symbol" class="form-label">Symbol (e.g., $):</label>
                 <input type="text" name="symbol" value="{{ $currency->symbol }}" class="form-control" placeholder="Currency Symbol" maxlength="5">
             </div>
@@ -40,7 +36,7 @@
                 <input type="checkbox" name="is_default" class="form-check-input" id="is_default" value="1" {{ $currency->is_default ? 'checked' : '' }}>
                 <label class="form-check-label" for="is_default">Set as Default</label>
             </div> -->
-            <button type="submit" class="btn btn-success">Submit</button>
+            <button type="submit" class="btn btn-success">Edit</button>
         </form>
     </div>
 </div>

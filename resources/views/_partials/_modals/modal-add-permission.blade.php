@@ -23,7 +23,7 @@
           <div class="col-12 text-center demo-vertical-spacing">
             <button type="submit" class="btn btn-primary me-sm-4 me-1">Submit</button>
             <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal"
-              aria-label="Close">Discard</button>
+              aria-label="Close">Cancel</button>
           </div>
         </form>
       </div>

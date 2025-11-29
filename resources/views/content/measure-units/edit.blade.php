@@ -31,7 +31,7 @@
                 <label for="short_name" class="form-label">Short Name (e.g., kg):</label>
                 <input type="text" name="short_name" value="{{ $measureUnit->short_name }}" class="form-control" placeholder="Short Name" maxlength="10">
             </div>
-            <button type="submit" class="btn btn-success">Submit</button>
+            <button type="submit" class="btn btn-success">Update</button>
         </form>
     </div>
 </div>

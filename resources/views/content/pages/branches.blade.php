@@ -31,27 +31,12 @@
                 <th></th>
                 <th>Name</th>
                 <th>Description</th>
+                <th>Status</th> {{-- Add Status column --}}
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              @foreach ($branches as $branch)
-                <tr data-id="{{ $branch->branch_id }}">
-                  <td></td>
-                  <td></td>
-                  <td>{{ $branch->branch_name }}</td>
-                  <td>{{ $branch->description }}</td>
-                  <td>
-                    <a href="#" class="btn btn-sm btn-primary edit-record" data-id="{{ $branch->branch_id }}">Edit</a>
-                    <form action="#" method="POST" style="display:inline-block;">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn btn-sm btn-danger delete-record"
-                        data-id="{{ $branch->branch_id }}">Delete</button>
-                    </form>
-                  </td>
-                </tr>
-              @endforeach
+              {{-- Initial content removed to prevent flicker, data will be loaded via DataTables AJAX --}}
             </tbody>
           </table>
         </div>
@@ -77,9 +62,9 @@
           <input type="text" id="modalBranchLocation" name="branchLocation" class="form-control" />
         </div>
         <div class="col-12 text-center demo-vertical-spacing">
-          <button type="submit" class="btn btn-primary me-sm-4 me-1 data-submit">Submit</button>
+          <button type="submit" class="btn btn-primary me-sm-4 me-1 data-submit">Add</button>
           <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="offcanvas"
-            aria-label="Close">Discard</button>
+            aria-label="Close">Cancel</button>
         </div>
       </form>
     </div>

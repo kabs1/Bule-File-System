@@ -7,6 +7,18 @@
       "slug": "pages-home"
     },
     {
+      "url": "/app/customers",
+      "name": "Customer Management",
+      "icon": "menu-icon icon-base bx bx-group",
+      "slug": "customer-management"
+    },
+    {
+      "url": "/stock-management",
+      "name": "Stock Management",
+      "icon": "menu-icon icon-base bx bx-package",
+      "slug": "stock-management"
+    },
+    {
       "name": "Administration",
       "icon": "menu-icon icon-base bx bx-cog",
       "slug": "administration",
@@ -71,18 +83,6 @@
           "slug": "system-settings"
         }
       ]
-    },
-    {
-      "url": "/app/customers",
-      "name": "Customer Management",
-      "icon": "menu-icon icon-base bx bx-group",
-      "slug": "customer-management"
-    },
-    {
-      "url": "/stock-management",
-      "name": "Stock Management",
-      "icon": "menu-icon icon-base bx bx-package",
-      "slug": "stock-management"
     }
   ]
 }

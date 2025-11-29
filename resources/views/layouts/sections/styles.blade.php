@@ -16,7 +16,7 @@
 
 <!-- Core CSS -->
 @vite(['resources/assets/vendor/scss/core.scss', 'resources/assets/css/demo.css',
-'resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.scss'])
+'resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.scss', 'resources/assets/css/custom.css'])
 
 <!-- Vendor Styles -->
 @vite(['resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.scss',

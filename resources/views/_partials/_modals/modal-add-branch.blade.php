@@ -1,4 +1,4 @@
-<!-- Add Branch Modal -->
+Add Branch Modal -->
 <div class="modal fade" id="addBranchModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-simple">
     <div class="modal-content">
@@ -14,19 +14,19 @@
             <input type="text" id="modalBranchName" name="name" class="form-control"
               placeholder="Branch Name" autofocus />
           </div>
-          <div class="col-12 form-control-validation mb-4">
+          <div class="col-12 mb-4">
             <label class="form-label" for="modalBranchLocation">Location</label>
             <input type="text" id="modalBranchLocation" name="location" class="form-control"
               placeholder="Branch Location" />
           </div>
           <div class="col-12 text-center demo-vertical-spacing">
-            <button type="submit" class="btn btn-primary me-sm-4 me-1">Submit</button>
+            <button type="submit" class="btn btn-primary me-sm-4 me-1">Add</button>
             <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal"
-              aria-label="Close">Discard</button>
+              aria-label="Close">Cancel</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
-<!--/ Add Branch Modal -->
+<!--/ Add Branch Modal

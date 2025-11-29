@@ -16,15 +16,15 @@ use App\Http\Controllers\ActivityLogController; // Import ActivityLogController
 // Main Page Route
 Route::get('/', function () {
     return redirect()->route('login');
-});
+}); 
 
-
+ 
 
 // locale
 Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
 Route::get('/pages/misc-error', [MiscError::class, 'index'])->name('pages-misc-error');
 
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
+Route::middleware(['auth:web', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::get('/dashboard', [Page2::class, 'index'])->name('dashboard');
 
     Route::get('/roles', [RoleController::class, 'index'])->middleware('can:view role')->name('roles');
@@ -69,6 +69,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/app/branches/{branch}', [BranchController::class, 'show'])->name('branches.show');
     Route::put('/app/branches/{branch}', [BranchController::class, 'update'])->name('branches.update');
     Route::delete('/app/branches/{branch}', [BranchController::class, 'destroy'])->name('branches.destroy');
+    Route::put('/app/branches/{branch}/deactivate', [BranchController::class, 'deactivate'])->name('branches.deactivate');
+    Route::put('/app/branches/{branch}/activate', [BranchController::class, 'activate'])->name('branches.activate');
 
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');

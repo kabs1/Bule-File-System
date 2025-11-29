@@ -5,7 +5,7 @@
       <div class="modal-body">
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="text-center mb-6">
-          <h4 class="role-title mb-2">Add New Role</h4>
+          <h4 class="role-title mb-2">Update Role</h4>
           <p>Set role permissions</p>
         </div>
         <!-- Add role form -->
@@ -56,7 +56,7 @@
             <!-- Permission table -->
           </div>
           <div class="col-12 text-center">
-            <button type="submit" class="btn btn-primary me-sm-3 me-1">Submit</button>
+            <button type="submit" class="btn btn-primary me-sm-3 me-1">Update</button>
             <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal"
               aria-label="Close">Cancel</button>
           </div>

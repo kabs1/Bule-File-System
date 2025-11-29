@@ -630,9 +630,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
       },
       customerEmail: {
         validators: {
-          notEmpty: {
-            message: 'Please enter your email'
-          },
           emailAddress: {
             message: 'The value is not a valid email address'
           }
@@ -673,7 +670,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     const data = {
       first_name: formData.get('customerFirstName'),
       last_name: formData.get('customerLastName'),
-      email: formData.get('customerEmail'),
+      email: formData.get('customerEmail') || null, // Send null if empty
       contact: formData.get('customerContact'),
       branch_id: formData.get('branchId'),
     };

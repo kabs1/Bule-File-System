@@ -66,6 +66,11 @@ $customizerHidden = 'customizer-hide';
                         <div class="mb-6">
                             <button class="btn btn-primary d-grid w-100" type="submit">Login</button>
                         </div>
+                        @if ($errors->has('email-username'))
+                            <div class="alert alert-danger mt-3">
+                                {{ $errors->first('email-username') }}
+                            </div>
+                        @endif
                     </form>
 
                     <!-- <p class="text-center">
