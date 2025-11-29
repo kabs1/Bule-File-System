@@ -35,8 +35,8 @@ jobs:
       # - name: Install Node.js dependencies (if needed for build)
       #   run: yarn install --force # Use --force to bypass ERESOLVE dependency conflicts during deployment
 
-      - name: Build project (if needed)
-        run: yarn build
+      # - name: Build project (if needed)
+      #   run: yarn build
 
       # - name: Laravel specific optimizations
       #   run: |
