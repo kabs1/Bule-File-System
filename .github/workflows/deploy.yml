@@ -39,6 +39,10 @@ jobs:
 
       - name: Laravel specific optimizations
         run: |
+          # Set environment variables to prevent database connection during optimization
+          echo "APP_ENV=production" >> $GITHUB_ENV
+          echo "CACHE_DRIVER=file" >> $GITHUB_ENV # Use file cache to avoid database connection
+          
           php artisan optimize:clear
           php artisan config:cache
           php artisan route:cache
