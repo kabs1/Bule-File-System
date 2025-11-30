@@ -27,12 +27,12 @@
           <div class="avatar me-4">
             <span class="avatar-initial rounded bg-label-primary"><i class="icon-base bx bxs-truck icon-lg"></i></span>
           </div>
-          <h4 class="mb-0">42</h4>
+          <h4 class="mb-0">{{ $totalCustomers }}</h4>
         </div>
-        <p class="mb-2">Tocal Customers</p>
+        <p class="mb-2">Total Customers</p>
         <p class="mb-0">
-          <span class="text-heading fw-medium me-2">+18.2%</span>
-          <span class="text-body-secondary">than last week</span>
+          <span class="text-heading fw-medium me-2"></span>
+          <span class="text-body-secondary"></span>
         </p>
       </div>
     </div>
@@ -44,12 +44,12 @@
           <div class="avatar me-4">
             <span class="avatar-initial rounded bg-label-warning"><i class="icon-base bx bx-error icon-lg"></i></span>
           </div>
-          <h4 class="mb-0">8</h4>
+          <h4 class="mb-0">{{ $totalLots }}</h4>
         </div>
-        <p class="mb-2">Tatol Lots</p>
+        <p class="mb-2">Total Lots</p>
         <p class="mb-0">
-          <span class="text-heading fw-medium me-2">-8.7%</span>
-          <span class="text-body-secondary">than last week</span>
+          <span class="text-heading fw-medium me-2"></span>
+          <span class="text-body-secondary"></span>
         </p>
       </div>
     </div>
@@ -62,12 +62,12 @@
             <span class="avatar-initial rounded bg-label-danger"><i
                 class="icon-base bx bx-git-repo-forked icon-lg"></i></span>
           </div>
-          <h4 class="mb-0">27</h4>
+          <h4 class="mb-0">{{ $totalInwards }}</h4>
         </div>
         <p class="mb-2">Total Inwards</p>
         <p class="mb-0">
-          <span class="text-heading fw-medium me-2">+4.3%</span>
-          <span class="text-body-secondary">than last week</span>
+          <span class="text-heading fw-medium me-2"></span>
+          <span class="text-body-secondary"></span>
         </p>
       </div>
     </div>
@@ -79,12 +79,12 @@
           <div class="avatar me-4">
             <span class="avatar-initial rounded bg-label-info"><i class="icon-base bx bx-time-five icon-lg"></i></span>
           </div>
-          <h4 class="mb-0">13</h4>
+          <h4 class="mb-0">{{ $openInwards }}</h4>
         </div>
         <p class="mb-2">Open Inwards</p>
         <p class="mb-0">
-          <span class="text-heading fw-medium me-2">-2.5%</span>
-          <span class="text-body-secondary">than last week</span>
+          <span class="text-heading fw-medium me-2"></span>
+          <span class="text-body-secondary"></span>
         </p>
       </div>
     </div>
@@ -100,7 +100,7 @@
       <div class="card-header d-flex justify-content-between">
         <div class="card-title mb-0">
           <h5 class="mb-1 me-2">Delivery Performance</h5>
-          <p class="card-subtitle">12% increase in this month</p>
+          <p class="card-subtitle">Data for selected branch</p>
         </div>
         <div class="dropdown">
           <button class="btn text-body-secondary p-0" type="button" id="deliveryPerformance" data-bs-toggle="dropdown"
@@ -122,14 +122,14 @@
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
-                <h6 class="mb-1 fw-normal">Total Packages</h6>
+                <h6 class="mb-1 fw-normal">Total Purchases</h6>
                 <p class="text-success mb-0">
                   <i class="icon-base bx bx-chevron-up icon-lg me-1"></i>
-                  5038
+                  {{ $totalPurchases }}
                 </p>
               </div>
               <div class="user-progress">
-                <h6 class="mb-0">5038</h6>
+                <h6 class="mb-0">{{ $totalPurchases }}</h6>
               </div>
             </div>
           </li>
@@ -139,14 +139,14 @@
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
-                <h6 class="mb-1 fw-normal">Packages delivered</h6>
+                <h6 class="mb-1 fw-normal">Total Tested</h6>
                 <p class="text-success mb-0">
                   <i class="icon-base bx bx-chevron-up icon-lg me-1"></i>
-                  4000
+                  {{ $totalTested }}
                 </p>
               </div>
               <div class="user-progress">
-                <h6 class="mb-0">4000</h6>
+                <h6 class="mb-0">{{ $totalTested }}</h6>
               </div>
             </div>
           </li>
@@ -157,14 +157,14 @@
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
-                <h6 class="mb-1 fw-normal">Packages out for delivery</h6>
+                <h6 class="mb-1 fw-normal">Total Melted</h6>
                 <p class="text-danger mb-0">
                   <i class="icon-base bx bx-chevron-down icon-lg me-1"></i>
-                  3829
+                  {{ $totalMelted }}
                 </p>
               </div>
               <div class="user-progress">
-                <h6 class="mb-0">2829</h6>
+                <h6 class="mb-0">{{ $totalMelted }}</h6>
               </div>
             </div>
           </li>
@@ -257,7 +257,7 @@
       <div class="card-header d-flex justify-content-between">
         <div class="card-title mb-0">
           <h5 class="mb-1">Purchases</h5>
-          <p class="card-subtitle">62 deliveries in progress</p>
+          <p class="card-subtitle">Data for selected branch</p>
         </div>
         <div class="dropdown">
           <button class="btn text-body-secondary p-0" type="button" id="ordersCountries" data-bs-toggle="dropdown"
