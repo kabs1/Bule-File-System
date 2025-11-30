@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Jetstream\Events\TeamCreated;
 use Laravel\Jetstream\Events\TeamDeleted;
 use Laravel\Jetstream\Events\TeamUpdated;
@@ -12,6 +13,7 @@ use Spatie\Activitylog\LogOptions;
 
 class Team extends Model
 {
+    use SoftDeletes;
     use LogsActivity;
     /** @use HasFactory<\Database\Factories\TeamFactory> */
     use HasFactory;
