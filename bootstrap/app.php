@@ -13,6 +13,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Auth\Middleware\AuthenticateSession;
 use App\Http\Controllers\SettingController; // Explicitly import SettingController
+use App\Http\Middleware\BranchSelectorMiddleware; // Import your new middleware
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -30,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
             VerifyCsrfToken::class,
             SubstituteBindings::class,
             LocaleMiddleware::class, // Keep your custom middleware
+            BranchSelectorMiddleware::class, // Register your new middleware
         ]);
 
         $middleware->api([

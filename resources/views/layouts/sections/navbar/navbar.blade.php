@@ -26,6 +26,11 @@
                 </span>
                 <span class="app-brand-text demo menu-text fw-bold ms-2">{{ $systemName }}</span>
             </a>
+            @php
+                $allBranches = App\Models\Branch::all();
+                $selectedBranchId = Session::get('selected_branch_id', 'all');
+            @endphp
+            @include('layouts/sections/navbar/branch-selector', ['allBranches' => $allBranches, 'selectedBranchId' => $selectedBranchId])
         </div>
     </nav>
 @endif
